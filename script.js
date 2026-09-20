@@ -1,29 +1,20 @@
-/* =====================================================
-   GAME STATE
-===================================================== */
+// ===============================
+// GAME STATE
+// ===============================
 
 let currentLevel = 0;
 
-let player = {
-    row: 1,
-    col: 1,
-    direction: "down"
-};
-
 let timer = 0;
-
 let moves = 0;
 
 let gameStarted = false;
-
 let gameWon = false;
-
 let gamePaused = false;
 
 
-/* =====================================================
-   ELEMENTS
-===================================================== */
+// ===============================
+// DOM ELEMENTS
+// ===============================
 
 const dungeonElement =
     document.getElementById("dungeon");
@@ -37,21 +28,6 @@ const movesElement =
 const levelElement =
     document.getElementById("level");
 
-const winScreen =
-    document.getElementById("winScreen");
-
-const winTime =
-    document.getElementById("winTime");
-
-const winMoves =
-    document.getElementById("winMoves");
-
-const nextLevel =
-    document.getElementById("nextLevel");
-
-const playAgain =
-    document.getElementById("playAgain");
-
 const restartButton =
     document.getElementById("restart");
 
@@ -64,684 +40,256 @@ const pauseScreen =
 const resumeButton =
     document.getElementById("resume");
 
+const winScreen =
+    document.getElementById("winScreen");
 
-/* =====================================================
-   BFS - CHECK DUNGEON SOLVABILITY
-===================================================== */
+const finalTimeElement =
+    document.getElementById("winTime");
 
-function isDungeonSolvable(dungeon) {
+const finalMovesElement =
+    document.getElementById("winMoves");
 
-    const rows = dungeon.length;
-    const cols = dungeon[0].length;
+const nextLevelButton =
+    document.getElementById("nextLevel");
 
-    const dr = [-1, 1, 0, 0];
-    const dc = [0, 0, -1, 1];
-
-    const visited =
-        Array.from(
-            { length: rows },
-            () => Array(cols).fill(false)
-        );
-
-    const queue = [[player.row, player.col]];
-    visited[player.row][player.col] = true;
-
-    while (queue.length > 0) {
-
-        const [currR, currC] =
-            queue.shift();
-
-        if (
-            dungeon[currR][currC] === "T"
-        ) {
-
-            return true;
-
-        }
-
-        for (let i = 0; i < 4; i++) {
-
-            const nextR = currR + dr[i];
-            const nextC = currC + dc[i];
-
-            if (
-                nextR >= 0 &&
-                nextR < rows &&
-                nextC >= 0 &&
-                nextC < cols &&
-                dungeon[nextR][nextC] !== "W" &&
-                !visited[nextR][nextC]
-            ) {
-
-                visited[nextR][nextC] = true;
-                queue.push([nextR,nextC]);
-
-            }
-        }
-
-    }
-    return false;
-
-}
+const playAgainButton =
+    document.getElementById("playAgain");
 
 
-/* =====================================================
-   DUNGEON GENERATION
-===================================================== */
-
-function generateDungeon() {
-
-    while (true) {
-
-        const dungeon = [];
-
-        for (let row = 0; row < 6; row++) {
-
-            const currentRow = [];
-
-
-            for (let col = 0; col < 6; col++) {
-
-                /* Outer border is always wall */
-
-                if (
-                    row === 0 ||
-                    row === 5 ||
-                    col === 0 ||
-                    col === 5
-                ) {
-
-                    currentRow.push("W");
-
-                }
-
-                else {
-
-                    /* Randomly create walls */
-
-                    const probability =
-                        Math.random();
-
-                    if (probability < 0.25) {
-                        currentRow.push("W");
-                    }
-
-                    else {
-                        currentRow.push(".");
-                    }
-
-                }
-
-            }
-
-
-            dungeon.push(currentRow);
-
-        }
-
-
-        /* Make player starting position open */
-        dungeon[1][1] = ".";
-
-        dungeon[4][4] = "T";
-
-
-        /* Check if dungeon is solvable */
-
-        if (isDungeonSolvable(dungeon)) {
-
-            return dungeon;
-
-        }
-    }
-
-}
-
-
-/* =====================================================
-   DUNGEONS
-===================================================== */
+// ===============================
+// CREATE LEVELS
+// ===============================
 
 const dungeons = [
-
     generateDungeon(),
-
     generateDungeon(),
-
     generateDungeon()
-
 ];
 
 
-/* =====================================================
-   CURRENT DUNGEON
-===================================================== */
-
-function getCurrentDungeon() {
-
-    return dungeons[currentLevel];
-
-}
-
-
-/* =====================================================
-   RENDER DUNGEON
-===================================================== */
-
-function renderDungeon() {
-
-    const dungeon =
-        getCurrentDungeon();
-
-
-    dungeonElement.innerHTML = "";
-
-
-    dungeon.forEach(
-        (row, rowIndex) => {
-
-            row.forEach(
-                (cell, columnIndex) => {
-
-                    const element =
-                        document.createElement("div");
-
-
-                    element.classList.add("cell");
-
-
-                    /* WALL */
-
-                    if (cell === "W") {
-
-                        element.classList.add("wall");
-
-                    }
-
-
-                    /* FLOOR */
-
-                    if (cell === ".") {
-
-                        element.classList.add("floor");
-
-                    }
-
-
-                    /* TREASURE */
-
-                    if (cell === "T") {
-
-                        element.classList.add(
-                            "floor"
-                        );
-
-                        element.classList.add(
-                            "treasure"
-                        );
-
-                        element.textContent = "💎";
-
-                    }
-
-
-                    /* PLAYER */
-
-                    if (
-                        rowIndex === player.row &&
-                        columnIndex === player.col
-                    ) {
-
-                        element.classList.add(
-                            "player"
-                        );
-
-
-                        const playerSprite =
-                            document.createElement("div");
-
-
-                        playerSprite.classList.add(
-                            "playerSprite"
-                        );
-
-
-                        playerSprite.classList.add(
-                            `face-${player.direction}`
-                        );
-
-
-                        element.appendChild(
-                            playerSprite
-                        );
-
-                    }
-
-
-                    dungeonElement.appendChild(
-                        element
-                    );
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   MOVE PLAYER
-===================================================== */
-
-function movePlayer(
-    rowChange,
-    colChange
-) {
-
-    if (gameWon || gamePaused) {
-
-        return;
-
-    }
-
-
-    const dungeon =
-        getCurrentDungeon();
-
-
-    const newRow =
-        player.row + rowChange;
-
-    const newCol =
-        player.col + colChange;
-
-
-    /* OUTSIDE DUNGEON */
-
-    if (
-        newRow < 0 ||
-        newRow >= dungeon.length ||
-        newCol < 0 ||
-        newCol >= dungeon[0].length
-    ) {
-
-        return;
-
-    }
-
-
-    /* WALL */
-
-    if (
-        dungeon[newRow][newCol] === "W"
-    ) {
-
-        return;
-
-    }
-
-
-    /* UPDATE POSITION */
-
-    player.row = newRow;
-
-    player.col = newCol;
-
-
-    /* UPDATE DIRECTION */
-
-    if (rowChange === -1) {
-
-        player.direction = "up";
-
-    }
-
-    else if (rowChange === 1) {
-
-        player.direction = "down";
-
-    }
-
-    else if (colChange === -1) {
-
-        player.direction = "left";
-
-    }
-
-    else if (colChange === 1) {
-
-        player.direction = "right";
-
-    }
-
-
-    /* START GAME */
-
-    gameStarted = true;
-
-
-    /* COUNT MOVE */
-
-    moves++;
-
-
-    movesElement.textContent =
-        moves;
-
-
-    /* RENDER */
-
-    renderDungeon();
-
-
-    /* CHECK WIN */
-
-    checkWin();
-
-}
-
-
-/* =====================================================
-   CHECK WIN
-===================================================== */
+// ===============================
+// CHECK WIN
+// ===============================
 
 function checkWin() {
 
     const dungeon =
-        getCurrentDungeon();
-
+        dungeons[currentLevel];
 
     if (
-        dungeon[player.row][player.col] === "T"
+        dungeon[player.row][player.col] === "T" &&
+        hasKey
     ) {
 
         gameWon = true;
 
+        clearInterval(
+            timerInterval
+        );
 
-        winTime.textContent =
+        finalTimeElement.textContent =
             formatTime(timer);
 
-
-        winMoves.textContent =
+        finalMovesElement.textContent =
             moves;
-
 
         winScreen.style.display =
             "flex";
-
-
-        if (
-            currentLevel ===
-            dungeons.length - 1
-        ) {
-
-            nextLevel.textContent =
-                "FINISH GAME";
-
-        }
-
-        else {
-
-            nextLevel.textContent =
-                "NEXT LEVEL";
-
-        }
-
     }
-
 }
 
 
-/* =====================================================
-   FORMAT TIME
-===================================================== */
-
-function formatTime(totalSeconds) {
-
-    const minutes =
-        Math.floor(
-            totalSeconds / 60
-        );
-
-
-    const seconds =
-        totalSeconds % 60;
-
-
-    const formattedMinutes =
-        String(minutes)
-            .padStart(2, "0");
-
-
-    const formattedSeconds =
-        String(seconds)
-            .padStart(2, "0");
-
-
-    return (
-        formattedMinutes +
-        ":" +
-        formattedSeconds
-    );
-
-}
-
-
-/* =====================================================
-   KEYBOARD CONTROLS
-===================================================== */
+// ===============================
+// KEYBOARD CONTROLS
+// ===============================
 
 document.addEventListener(
     "keydown",
-    function(event) {
+    (event) => {
 
-        /* UP */
+        // ESC = PAUSE / RESUME
 
-        if (
-            event.key === "ArrowUp"
-        ) {
-
-            event.preventDefault();
-
-            movePlayer(-1, 0);
-
-        }
-
-
-        /* DOWN */
-
-        else if (
-            event.key === "ArrowDown"
-        ) {
-
-            event.preventDefault();
-
-            movePlayer(1, 0);
-
-        }
-
-
-        /* LEFT */
-
-        else if (
-            event.key === "ArrowLeft"
-        ) {
-
-            event.preventDefault();
-
-            movePlayer(0, -1);
-
-        }
-
-
-        /* RIGHT */
-
-        else if (
-            event.key === "ArrowRight"
-        ) {
-
-            event.preventDefault();
-
-            movePlayer(0, 1);
-
-        }
-
-
-        /* RESTART */
-
-        else if (
-            event.key.toLowerCase() === "r"
-        ) {
-
-            restartGame();
-
-        }
-
-
-        /* PAUSE */
-
-        else if (
-            event.key === "Escape"
-        ) {
+        if (event.key === "Escape") {
 
             togglePause();
 
+            return;
         }
 
+
+        // R = RESTART
+
+        if (
+            event.key === "r" ||
+            event.key === "R"
+        ) {
+
+            resetLevel();
+
+            return;
+        }
+
+
+        // STOP INPUT
+
+        if (
+            gameWon ||
+            gamePaused
+        ) {
+
+            return;
+        }
+
+
+        // MOVEMENT
+
+        switch (event.key) {
+
+            case "ArrowUp":
+            case "w":
+            case "W":
+
+                movePlayer(-1, 0);
+
+                break;
+
+
+            case "ArrowDown":
+            case "s":
+            case "S":
+
+                movePlayer(1, 0);
+
+                break;
+
+
+            case "ArrowLeft":
+            case "a":
+            case "A":
+
+                movePlayer(0, -1);
+
+                break;
+
+
+            case "ArrowRight":
+            case "d":
+            case "D":
+
+                movePlayer(0, 1);
+
+                break;
+        }
     }
 );
 
 
-/* =====================================================
-   TIMER
-===================================================== */
+// ===============================
+// TIMER
+// ===============================
 
-setInterval(
-    function() {
+let timerInterval =
+    setInterval(() => {
 
         if (
             gameStarted &&
             !gameWon &&
-            !gamePaused
+            !gamePaused &&
+            !trapTriggered
         ) {
 
             timer++;
 
-            timerElement.textContent =
-                formatTime(timer);
-
+            updateUI();
         }
 
-    },
-    1000
-);
+    }, 1000);
 
 
-/* =====================================================
-   RESET LEVEL
-===================================================== */
+// ===============================
+// RESET LEVEL
+// ===============================
 
 function resetLevel() {
 
-    player.row = 1;
+    clearInterval(
+        timerInterval
+    );
 
-    player.col = 1;
 
-    player.direction = "down";
+    // RESET PLAYER
 
+    player = {
+        row: 1,
+        col: 1,
+        direction: "down"
+    };
+
+
+    // RESET GAME STATE
+
+    hasKey = false;
 
     timer = 0;
-
     moves = 0;
 
-
     gameStarted = false;
-
     gameWon = false;
-
     gamePaused = false;
+    trapTriggered = false;
 
 
-    timerElement.textContent =
-        "00:00";
-
-
-    movesElement.textContent =
-        "0";
-
-
-    levelElement.textContent =
-        `${currentLevel + 1} / ${dungeons.length}`;
-
+    // HIDE SCREENS
 
     winScreen.style.display =
         "none";
-
 
     pauseScreen.style.display =
         "none";
 
 
+    // GENERATE NEW DUNGEON
+
+    dungeons[currentLevel] =
+        generateDungeon();
+
+
+    // RENDER
+
     renderDungeon();
 
+
+    // RESTART TIMER
+
+    timerInterval =
+        setInterval(() => {
+
+            if (
+                gameStarted &&
+                !gameWon &&
+                !gamePaused &&
+                !trapTriggered
+            ) {
+
+                timer++;
+
+                updateUI();
+            }
+
+        }, 1000);
 }
 
 
-/* =====================================================
-   RESTART GAME
-===================================================== */
-
-function restartGame() {
-
-    currentLevel = 0;
-
-    resetLevel();
-
-}
-
-
-/* =====================================================
-   LOAD NEXT LEVEL
-===================================================== */
-
-function loadNextLevel() {
-
-    if (
-        currentLevel <
-        dungeons.length - 1
-    ) {
-
-        currentLevel++;
-
-        resetLevel();
-
-    }
-
-    else {
-
-        currentLevel = 0;
-
-        resetLevel();
-
-    }
-
-}
-
-
-/* =====================================================
-   PAUSE
-===================================================== */
+// ===============================
+// PAUSE / RESUME
+// ===============================
 
 function togglePause() {
 
     if (gameWon) {
 
         return;
-
     }
-
 
     gamePaused =
         !gamePaused;
@@ -752,54 +300,98 @@ function togglePause() {
         pauseScreen.style.display =
             "flex";
 
-    }
-
-    else {
+    } else {
 
         pauseScreen.style.display =
             "none";
-
     }
-
 }
 
 
-/* =====================================================
-   BUTTON EVENTS
-===================================================== */
+// ===============================
+// BUTTONS
+// ===============================
+
+// RESTART
 
 restartButton.addEventListener(
     "click",
-    restartGame
+    () => {
+
+        resetLevel();
+    }
 );
 
+
+// PAUSE
 
 pauseButton.addEventListener(
     "click",
-    togglePause
+    () => {
+
+        togglePause();
+    }
 );
 
+
+// RESUME
 
 resumeButton.addEventListener(
     "click",
-    togglePause
+    () => {
+
+        gamePaused = false;
+
+        pauseScreen.style.display =
+            "none";
+    }
 );
 
 
-playAgain.addEventListener(
+// NEXT LEVEL
+
+nextLevelButton.addEventListener(
     "click",
-    restartGame
+    () => {
+
+        if (
+            currentLevel <
+            dungeons.length - 1
+        ) {
+
+            currentLevel++;
+
+            resetLevel();
+
+        } else {
+
+            alert(
+                "🎉 You completed all levels!"
+            );
+
+            currentLevel = 0;
+
+            resetLevel();
+        }
+    }
 );
 
 
-nextLevel.addEventListener(
+// PLAY AGAIN
+
+playAgainButton.addEventListener(
     "click",
-    loadNextLevel
+    () => {
+
+        currentLevel = 0;
+
+        resetLevel();
+    }
 );
 
 
-/* =====================================================
-   START
-===================================================== */
+// ===============================
+// INITIAL RENDER
+// ===============================
 
 renderDungeon();

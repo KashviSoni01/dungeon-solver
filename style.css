@@ -303,6 +303,8 @@ main {
 
 .floor {
 
+    position: relative;
+
     background:
 
         radial-gradient(
@@ -351,6 +353,8 @@ main {
 ===================================================== */
 
 .wall {
+
+    position: relative;
 
     background:
 
@@ -715,7 +719,129 @@ main {
 }
 
 
-.key {
+.floor.key {
+
+    position: relative;
+
+    min-width: 0;
+
+    width: auto;
+
+    height: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 1px solid #b88b2d;
+
+    background:
+        radial-gradient(
+            circle,
+            #4a3810 0%,
+            #17202b 48%,
+            #07101a 100%
+        );
+
+    color: #ffd35a;
+
+    font-size: 28px;
+
+    text-align: center;
+
+    filter:
+        drop-shadow(0 0 5px rgba(255, 205, 70, 0.85))
+        drop-shadow(0 0 12px rgba(255, 180, 30, 0.35));
+
+    z-index: 4;
+
+}
+
+.floor.door {
+
+    position: relative;
+
+    min-width: 0;
+
+    width: auto;
+
+    height: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 1px solid #a3486d;
+
+    background:
+        radial-gradient(
+            circle,
+            #401a2b 0%,
+            #17202b 48%,
+            #07101a 100%
+        );
+
+    color: #ff6f9d;
+
+    font-size: 28px;
+
+    text-align: center;
+
+    filter:
+        drop-shadow(0 0 5px rgba(255, 70, 130, 0.75))
+        drop-shadow(0 0 12px rgba(220, 40, 100, 0.3));
+
+    z-index: 4;
+
+}
+
+.floor.trap {
+
+    position: relative;
+
+    min-width: 0;
+
+    width: auto;
+
+    height: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 1px solid #8f3b4f;
+
+    background:
+        radial-gradient(
+            circle,
+            #38131d 0%,
+            #101b28 50%,
+            #060d16 100%
+        );
+
+    color: #ff536f;
+
+    font-size: 26px;
+
+    text-align: center;
+
+    filter:
+        drop-shadow(0 0 5px rgba(255, 60, 80, 0.8))
+        drop-shadow(0 0 12px rgba(220, 30, 50, 0.3));
+
+    z-index: 3;
+
+}
+
+/* Keyboard shortcut badge inside control buttons */
+
+.controls .key {
 
     min-width: 37px;
 
@@ -1210,6 +1336,15 @@ main {
 
         background-size:
             208px 208px;
+
+    }
+
+    .floor.key,
+    .floor.door,
+    .floor.trap,
+    .treasure {
+
+        font-size: 22px;
 
     }
 
