@@ -1,0 +1,1253 @@
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body {
+
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            #111c2e 0%,
+            #07101d 45%,
+            #02060d 100%
+        );
+
+    color: #edf3fb;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    overflow-x: hidden;
+}
+
+
+/* =====================================================
+   GAME
+===================================================== */
+
+.game {
+
+    width: 900px;
+
+    max-width: 95vw;
+
+    padding: 38px 42px 32px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #091321,
+            #040a13
+        );
+
+    border: 1px solid #194873;
+
+    box-shadow:
+
+        0 0 25px
+        rgba(20, 100, 170, 0.18),
+
+        0 30px 90px
+        rgba(0, 0, 0, 0.85);
+
+    position: relative;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 32px;
+
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.title-area {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+}
+
+
+.title-icon {
+
+    color: #2386ca;
+
+    font-size: 17px;
+
+    text-shadow:
+        0 0 10px
+        rgba(40, 140, 220, 0.9);
+
+}
+
+
+h1 {
+
+    font-size: 38px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 3px;
+
+    color: #e9f0f8;
+
+    text-shadow:
+
+        0 0 10px
+        rgba(80, 150, 220, 0.45),
+
+        0 3px 8px
+        rgba(0, 0, 0, 0.9);
+
+}
+
+
+/* =====================================================
+   HUD
+===================================================== */
+
+.stats {
+
+    display: flex;
+
+    gap: 14px;
+
+}
+
+
+.stat {
+
+    min-width: 100px;
+
+    padding: 10px 16px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            180deg,
+            #0c1a2c,
+            #07101d
+        );
+
+    border: 1px solid #20517c;
+
+    box-shadow:
+
+        inset 0 0 12px
+        rgba(0, 0, 0, 0.6),
+
+        0 0 8px
+        rgba(30, 100, 170, 0.12);
+
+}
+
+
+.stat span {
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+
+    color: #6f91b6;
+
+}
+
+
+.stat strong {
+
+    margin-top: 5px;
+
+    font-size: 21px;
+
+    letter-spacing: 1px;
+
+    color: #eaf1fa;
+
+    text-shadow:
+        0 0 8px
+        rgba(90, 160, 230, 0.35);
+
+}
+
+
+/* =====================================================
+   DUNGEON AREA
+===================================================== */
+
+main {
+
+    display: flex;
+
+    justify-content: center;
+
+}
+
+
+/* =====================================================
+   DUNGEON FRAME
+===================================================== */
+
+.dungeon-frame {
+
+    padding: 8px;
+
+    background:
+        #030914;
+
+    border: 2px solid #1c5b89;
+
+    box-shadow:
+
+        0 0 18px
+        rgba(20, 120, 200, 0.45),
+
+        0 0 45px
+        rgba(10, 70, 130, 0.28),
+
+        inset 0 0 25px
+        rgba(0, 0, 0, 0.9);
+
+}
+
+
+/* =====================================================
+   DUNGEON GRID
+===================================================== */
+
+#dungeon {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, 76px);
+
+    grid-template-rows:
+        repeat(6, 76px);
+
+    gap: 2px;
+
+    background: #02060d;
+
+}
+
+
+/* =====================================================
+   CELLS
+===================================================== */
+
+.cell {
+
+    width: 76px;
+
+    height: 76px;
+
+    position: relative;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    overflow: hidden;
+
+}
+
+
+/* =====================================================
+   FLOOR
+===================================================== */
+
+.floor {
+
+    background:
+
+        radial-gradient(
+            circle at 35% 30%,
+            #13263a 0%,
+            #091522 55%,
+            #050d17 100%
+        );
+
+    border: 1px solid #12273c;
+
+    box-shadow:
+
+        inset 0 0 18px
+        rgba(0, 0, 0, 0.75);
+
+}
+
+
+/* subtle floor lines */
+
+.floor::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+
+        linear-gradient(
+            45deg,
+            transparent 49%,
+            rgba(70, 100, 130, 0.05) 50%,
+            transparent 51%
+        );
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   STONE WALL
+===================================================== */
+
+.wall {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.08),
+            transparent 35%
+        ),
+
+        linear-gradient(
+            315deg,
+            rgba(0, 0, 0, 0.45),
+            transparent 55%
+        ),
+
+        linear-gradient(
+            160deg,
+            #414b60,
+            #2d3547
+        );
+
+    border:
+
+        1px solid
+        #657188;
+
+    box-shadow:
+
+        inset 2px 2px 0
+        rgba(255, 255, 255, 0.08),
+
+        inset -3px -3px 0
+        rgba(0, 0, 0, 0.5),
+
+        inset 0 0 12px
+        rgba(0, 0, 0, 0.35);
+
+}
+
+
+/* =====================================================
+   STONE CRACKS
+===================================================== */
+
+.wall::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+
+        linear-gradient(
+            25deg,
+            transparent 45%,
+            rgba(10, 18, 30, 0.28) 46%,
+            transparent 48%
+        ),
+
+        linear-gradient(
+            115deg,
+            transparent 43%,
+            rgba(10, 18, 30, 0.25) 44%,
+            transparent 46%
+        ),
+
+        linear-gradient(
+            75deg,
+            transparent 58%,
+            rgba(255, 255, 255, 0.04) 59%,
+            transparent 61%
+        );
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   PLAYER CELL
+===================================================== */
+
+.player {
+
+    background:
+
+        radial-gradient(
+            circle,
+            rgba(25, 110, 190, 0.42),
+            rgba(5, 20, 35, 0.2) 70%
+        );
+
+    border:
+
+        1px solid
+        #348bd0;
+
+    box-shadow:
+
+        0 0 12px
+        rgba(30, 135, 230, 0.8),
+
+        inset 0 0 18px
+        rgba(30, 120, 210, 0.2);
+
+    z-index: 5;
+
+}
+
+
+/* =====================================================
+   PLAYER SPRITE
+===================================================== */
+
+.playerSprite {
+
+    width: 60px;
+
+    height: 60px;
+
+    background-image:
+        url("assets/player/player.svg");
+
+    background-repeat:
+        no-repeat;
+
+    background-size:
+        240px 240px;
+
+    image-rendering:
+        pixelated;
+
+    filter:
+
+        drop-shadow(
+            0 0 4px
+            rgba(50, 160, 255, 0.9)
+        )
+
+        drop-shadow(
+            0 0 9px
+            rgba(30, 110, 220, 0.45)
+        );
+
+    animation:
+
+        playerWalk
+        0.55s
+        steps(4)
+        infinite;
+
+}
+
+
+/* =====================================================
+   PLAYER DIRECTIONS
+===================================================== */
+
+.face-down {
+
+    background-position:
+        0 0;
+
+}
+
+
+.face-left {
+
+    background-position:
+        0 -60px;
+
+}
+
+
+.face-right {
+
+    background-position:
+        0 -120px;
+
+}
+
+
+.face-up {
+
+    background-position:
+        0 -180px;
+
+}
+
+
+/* =====================================================
+   WALKING ANIMATION
+===================================================== */
+
+@keyframes playerWalk {
+
+    from {
+
+        background-position-x:
+            0;
+
+    }
+
+    to {
+
+        background-position-x:
+            -240px;
+
+    }
+
+}
+
+
+/* =====================================================
+   TREASURE
+===================================================== */
+
+.treasure {
+
+    background:
+
+        radial-gradient(
+            circle,
+            #604b18 0%,
+            #30240d 50%,
+            #120e06 100%
+        );
+
+    border:
+
+        1px solid
+        #b88b2d;
+
+    box-shadow:
+
+        0 0 15px
+        rgba(255, 195, 45, 0.75),
+
+        0 0 30px
+        rgba(255, 175, 25, 0.25),
+
+        inset 0 0 14px
+        rgba(255, 190, 50, 0.25);
+
+    font-size: 32px;
+
+    z-index: 4;
+
+    animation:
+
+        treasureGlow
+        1.5s
+        ease-in-out
+        infinite
+        alternate;
+
+}
+
+
+/* =====================================================
+   CONTROLS
+===================================================== */
+
+.controls {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 24px;
+
+    margin-top: 32px;
+
+}
+
+
+.controls button {
+
+    min-width: 205px;
+
+    height: 60px;
+
+    padding: 0 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 14px;
+
+    border: 1px solid #24567f;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            #102944,
+            #08182b
+        );
+
+    color: #dbe8f5;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    letter-spacing: 1.5px;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        inset 0 0 12px
+        rgba(50, 120, 180, 0.08),
+
+        0 8px 20px
+        rgba(0, 0, 0, 0.5);
+
+    transition:
+
+        transform 0.15s ease,
+
+        border-color 0.15s ease,
+
+        box-shadow 0.15s ease;
+
+}
+
+
+.controls button:hover {
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        #367db2;
+
+    box-shadow:
+
+        0 10px 25px
+        rgba(0, 0, 0, 0.6),
+
+        0 0 15px
+        rgba(40, 120, 200, 0.2);
+
+}
+
+
+.controls button:active {
+
+    transform:
+        translateY(1px);
+
+}
+
+
+.key {
+
+    min-width: 37px;
+
+    height: 29px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 1px solid #28618c;
+
+    background: #081522;
+
+    color: #dcecff;
+
+    font-size: 12px;
+
+}
+
+
+/* =====================================================
+   PAUSE SCREEN
+===================================================== */
+
+#pauseScreen {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background:
+        rgba(1, 5, 10, 0.88);
+
+    backdrop-filter:
+        blur(5px);
+
+    z-index: 90;
+
+}
+
+
+/* =====================================================
+   PAUSE BOX
+===================================================== */
+
+.pauseBox {
+
+    width: 390px;
+
+    padding: 40px;
+
+    text-align: center;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #122036,
+            #070e19
+        );
+
+    border:
+        1px solid #315d85;
+
+    box-shadow:
+
+        0 30px 80px
+        rgba(0, 0, 0, 0.85);
+
+}
+
+
+.pauseBox h2 {
+
+    font-size: 27px;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.pauseBox p {
+
+    color: #8da1b8;
+
+    font-size: 13px;
+
+    margin-bottom: 28px;
+
+}
+
+
+#resume {
+
+    width: 100%;
+
+    padding: 13px;
+
+    border:
+        1px solid #5274d5;
+
+    background:
+        linear-gradient(
+            180deg,
+            #4c68c7,
+            #304697
+        );
+
+    color: white;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+}
+
+
+/* =====================================================
+   WIN SCREEN
+===================================================== */
+
+#winScreen {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background:
+        rgba(1, 5, 10, 0.9);
+
+    backdrop-filter:
+        blur(6px);
+
+    z-index: 100;
+
+}
+
+
+/* =====================================================
+   WIN BOX
+===================================================== */
+
+.winBox {
+
+    width: 430px;
+
+    max-width: 90vw;
+
+    padding: 42px;
+
+    text-align: center;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #122139,
+            #070e19
+        );
+
+    border:
+        1px solid #315d85;
+
+    box-shadow:
+
+        0 30px 90px
+        rgba(0, 0, 0, 0.9),
+
+        0 0 35px
+        rgba(40, 110, 180, 0.2);
+
+    animation:
+        winAppear
+        0.35s
+        ease-out;
+
+}
+
+
+.winIcon {
+
+    color: #f3b82d;
+
+    font-size: 28px;
+
+    margin-bottom: 14px;
+
+    text-shadow:
+
+        0 0 15px
+        rgba(255, 190, 40, 0.8);
+
+}
+
+
+.winBox h2 {
+
+    font-size: 28px;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 12px;
+
+}
+
+
+.winBox p {
+
+    color: #91a4ba;
+
+    font-size: 14px;
+
+    margin-bottom: 27px;
+
+}
+
+
+/* =====================================================
+   FINAL STATS
+===================================================== */
+
+.finalStats {
+
+    display: flex;
+
+    gap: 12px;
+
+    margin-bottom: 22px;
+
+}
+
+
+.finalStats div {
+
+    flex: 1;
+
+    padding: 15px;
+
+    background:
+        #080f1b;
+
+    border:
+        1px solid #1d405f;
+
+}
+
+
+.finalStats span {
+
+    display: block;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    color: #7189a5;
+
+    margin-bottom: 7px;
+
+}
+
+
+.finalStats strong {
+
+    font-size: 25px;
+
+    color: #edf3fa;
+
+}
+
+
+/* =====================================================
+   NEXT LEVEL
+===================================================== */
+
+#nextLevel {
+
+    width: 100%;
+
+    padding: 14px;
+
+    border:
+        1px solid #637de0;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            #5069ce,
+            #30499b
+        );
+
+    color: white;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-weight: bold;
+
+    letter-spacing: 1.5px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 22px
+        rgba(30, 50, 130, 0.4);
+
+}
+
+
+#nextLevel:hover {
+
+    box-shadow:
+
+        0 10px 28px
+        rgba(40, 80, 200, 0.5);
+
+}
+
+
+/* =====================================================
+   PLAY AGAIN
+===================================================== */
+
+#playAgain {
+
+    width: 100%;
+
+    padding: 13px;
+
+    margin-top: 10px;
+
+    border:
+        1px solid #31577c;
+
+    background:
+        #0b1726;
+
+    color: #b7c8da;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+}
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes treasureGlow {
+
+    from {
+
+        transform:
+            scale(1);
+
+        box-shadow:
+
+            0 0 8px
+            rgba(255, 190, 45, 0.4);
+
+    }
+
+    to {
+
+        transform:
+            scale(1.08);
+
+        box-shadow:
+
+            0 0 18px
+            rgba(255, 190, 45, 0.8),
+
+            0 0 30px
+            rgba(255, 170, 25, 0.25);
+
+    }
+
+}
+
+
+@keyframes winAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            scale(0.9)
+            translateY(15px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            scale(1)
+            translateY(0);
+
+    }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 750px) {
+
+    .game {
+
+        padding: 25px 15px;
+
+    }
+
+
+    header {
+
+        flex-direction: column;
+
+        gap: 22px;
+
+    }
+
+
+    h1 {
+
+        font-size: 28px;
+
+    }
+
+
+    #dungeon {
+
+        grid-template-columns:
+            repeat(6, 52px);
+
+        grid-template-rows:
+            repeat(6, 52px);
+
+    }
+
+
+    .cell {
+
+        width: 52px;
+
+        height: 52px;
+
+    }
+
+
+    .playerSprite {
+
+        width: 52px;
+
+        height: 52px;
+
+        background-size:
+            208px 208px;
+
+    }
+
+
+    .face-left {
+        background-position: 0 -52px;
+    }
+
+
+    .face-right {
+        background-position: 0 -104px;
+    }
+
+
+    .face-up {
+        background-position: 0 -156px;
+    }
+
+
+    @keyframes playerWalk {
+
+        from {
+            background-position-x: 0;
+        }
+
+        to {
+            background-position-x: -208px;
+        }
+
+    }
+
+
+    .controls {
+
+        flex-direction: column;
+
+        align-items: center;
+
+    }
+
+}
