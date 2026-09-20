@@ -1,4 +1,27 @@
 /* =====================================================
+   GAME STATE
+===================================================== */
+
+let currentLevel = 0;
+
+let player = {
+    row: 1,
+    col: 1,
+    direction: "down"
+};
+
+let timer = 0;
+
+let moves = 0;
+
+let gameStarted = false;
+
+let gameWon = false;
+
+let gamePaused = false;
+
+
+/* =====================================================
    ELEMENTS
 ===================================================== */
 
@@ -43,80 +66,151 @@ const resumeButton =
 
 
 /* =====================================================
+   BFS - CHECK DUNGEON SOLVABILITY
+===================================================== */
+
+function isDungeonSolvable(dungeon) {
+
+    const rows = dungeon.length;
+    const cols = dungeon[0].length;
+
+    const dr = [-1, 1, 0, 0];
+    const dc = [0, 0, -1, 1];
+
+    const visited =
+        Array.from(
+            { length: rows },
+            () => Array(cols).fill(false)
+        );
+
+    const queue = [[player.row, player.col]];
+    visited[player.row][player.col] = true;
+
+    while (queue.length > 0) {
+
+        const [currR, currC] =
+            queue.shift();
+
+        if (
+            dungeon[currR][currC] === "T"
+        ) {
+
+            return true;
+
+        }
+
+        for (let i = 0; i < 4; i++) {
+
+            const nextR = currR + dr[i];
+            const nextC = currC + dc[i];
+
+            if (
+                nextR >= 0 &&
+                nextR < rows &&
+                nextC >= 0 &&
+                nextC < cols &&
+                dungeon[nextR][nextC] !== "W" &&
+                !visited[nextR][nextC]
+            ) {
+
+                visited[nextR][nextC] = true;
+                queue.push([nextR,nextC]);
+
+            }
+        }
+
+    }
+    return false;
+
+}
+
+
+/* =====================================================
+   DUNGEON GENERATION
+===================================================== */
+
+function generateDungeon() {
+
+    while (true) {
+
+        const dungeon = [];
+
+        for (let row = 0; row < 6; row++) {
+
+            const currentRow = [];
+
+
+            for (let col = 0; col < 6; col++) {
+
+                /* Outer border is always wall */
+
+                if (
+                    row === 0 ||
+                    row === 5 ||
+                    col === 0 ||
+                    col === 5
+                ) {
+
+                    currentRow.push("W");
+
+                }
+
+                else {
+
+                    /* Randomly create walls */
+
+                    const probability =
+                        Math.random();
+
+                    if (probability < 0.25) {
+                        currentRow.push("W");
+                    }
+
+                    else {
+                        currentRow.push(".");
+                    }
+
+                }
+
+            }
+
+
+            dungeon.push(currentRow);
+
+        }
+
+
+        /* Make player starting position open */
+        dungeon[1][1] = ".";
+
+        dungeon[4][4] = "T";
+
+
+        /* Check if dungeon is solvable */
+
+        if (isDungeonSolvable(dungeon)) {
+
+            return dungeon;
+
+        }
+    }
+
+}
+
+
+/* =====================================================
    DUNGEONS
 ===================================================== */
 
 const dungeons = [
 
-    /* =========================
-       LEVEL 1
-    ========================== */
+    generateDungeon(),
 
-    [
-        ["W", "W", "W", "W", "W", "W"],
-        ["W", ".", ".", ".", ".", "W"],
-        ["W", ".", "W", "W", ".", "W"],
-        ["W", ".", ".", ".", ".", "W"],
-        ["W", "W", "W", ".", "T", "W"],
-        ["W", "W", "W", "W", "W", "W"]
-    ],
+    generateDungeon(),
 
-
-    /* =========================
-       LEVEL 2
-    ========================== */
-
-    [
-        ["W", "W", "W", "W", "W", "W"],
-        ["W", ".", ".", "W", ".", "W"],
-        ["W", "W", ".", "W", ".", "W"],
-        ["W", ".", ".", ".", ".", "W"],
-        ["W", ".", "W", "W", ".", "W"],
-        ["W", ".", ".", ".", "T", "W"]
-    ],
-
-
-    /* =========================
-       LEVEL 3
-    ========================== */
-
-    [
-        ["W", "W", "W", "W", "W", "W"],
-        ["W", ".", ".", ".", "W", "W"],
-        ["W", ".", "W", ".", ".", "W"],
-        ["W", ".", "W", "W", ".", "W"],
-        ["W", ".", ".", ".", ".", "W"],
-        ["W", "W", "W", ".", "T", "W"]
-    ]
+    generateDungeon()
 
 ];
-
-
-/* =====================================================
-   GAME STATE
-===================================================== */
-
-let currentLevel = 0;
-
-let player = {
-
-    row: 1,
-
-    col: 1,
-
-    direction: "down"
-
-};
-
-let timer = 0;
-
-let moves = 0;
-
-let gameStarted = false;
-
-let gameWon = false;
-
-let gamePaused = false;
 
 
 /* =====================================================
@@ -443,6 +537,8 @@ document.addEventListener(
     "keydown",
     function(event) {
 
+        /* UP */
+
         if (
             event.key === "ArrowUp"
         ) {
@@ -452,6 +548,9 @@ document.addEventListener(
             movePlayer(-1, 0);
 
         }
+
+
+        /* DOWN */
 
         else if (
             event.key === "ArrowDown"
@@ -463,6 +562,9 @@ document.addEventListener(
 
         }
 
+
+        /* LEFT */
+
         else if (
             event.key === "ArrowLeft"
         ) {
@@ -472,6 +574,9 @@ document.addEventListener(
             movePlayer(0, -1);
 
         }
+
+
+        /* RIGHT */
 
         else if (
             event.key === "ArrowRight"
