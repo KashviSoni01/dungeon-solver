@@ -2,13 +2,15 @@
 // PLAYER STATE
 // ===============================
 
-let player = {
+player = {
     row: 1,
     col: 1,
-    direction: "down"
+    direction: "down",
+    isMoving: false
 };
 
 let hasKey = false;
+let hasPassedDoor = false;
 
 let trapTriggered = false;
 
@@ -78,13 +80,32 @@ function movePlayer(
         return;
     }
 
+    if (
+        nextCell === "T" &&
+        !hasPassedDoor
+    ) {
+        return;
+    }
+
 
     // ===============================
     // MOVE
     // ===============================
 
     player.row = newRow;
-    player.col = newCol;
+player.col = newCol;
+
+player.isMoving = true;
+
+if (rowChange === -1) {
+    player.direction = "up";
+} else if (rowChange === 1) {
+    player.direction = "down";
+} else if (colChange === -1) {
+    player.direction = "left";
+} else if (colChange === 1) {
+    player.direction = "right";
+}
 
 
     // ===============================
@@ -132,6 +153,10 @@ function movePlayer(
         dungeon[newRow][newCol] = ".";
     }
 
+    if (nextCell === "D") {
+        hasPassedDoor = true;
+    }
+
 
     // ===============================
     // TRAP
@@ -161,7 +186,11 @@ function movePlayer(
     // UPDATE SCREEN
     // ===============================
 
-    renderDungeon();
+renderDungeon();
+checkWin();
 
-    checkWin();
+setTimeout(() => {
+    player.isMoving = false;
+    renderDungeon();
+}, 350);
 }

@@ -9,7 +9,6 @@ function renderDungeon() {
     const dungeon =
         dungeons[currentLevel];
 
-
     dungeon.forEach(
         (row, rowIndex) => {
 
@@ -47,9 +46,6 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "treasure"
                         );
-
-                        cellElement.textContent =
-                            "💎";
                     }
 
 
@@ -62,9 +58,6 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "key"
                         );
-
-                        cellElement.textContent =
-                            "🗝️";
                     }
 
 
@@ -77,9 +70,6 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "door"
                         );
-
-                        cellElement.textContent =
-                            "🚪";
                     }
 
 
@@ -92,9 +82,6 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "trap"
                         );
-
-                        cellElement.textContent =
-                            "🪤";
                     }
 
 
@@ -115,6 +102,10 @@ function renderDungeon() {
                         );
 
 
+                        // ===============================
+                        // SPRITE SHEET PLAYER
+                        // ===============================
+
                         const sprite =
                             document.createElement("div");
 
@@ -122,6 +113,19 @@ function renderDungeon() {
                             "playerSprite",
                             `face-${player.direction}`
                         );
+
+
+                        // Only animate while moving
+                        if (
+                            typeof isPlayerMoving !==
+                            "undefined" &&
+                            isPlayerMoving
+                        ) {
+
+                            sprite.classList.add(
+                                "walking"
+                            );
+                        }
 
 
                         playerElement.appendChild(
@@ -175,7 +179,6 @@ function formatTime(seconds) {
 
     const remainingSeconds =
         seconds % 60;
-
 
     return (
         String(minutes).padStart(2, "0") +

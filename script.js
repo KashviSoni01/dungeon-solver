@@ -11,6 +11,8 @@ let gameStarted = false;
 let gameWon = false;
 let gamePaused = false;
 
+let timerInterval;
+
 
 // ===============================
 // DOM ELEMENTS
@@ -61,9 +63,9 @@ const playAgainButton =
 // ===============================
 
 const dungeons = [
-    generateDungeon(),
-    generateDungeon(),
-    generateDungeon()
+    generateDungeon(0),
+    generateDungeon(1),
+    generateDungeon(2)
 ];
 
 
@@ -78,7 +80,8 @@ function checkWin() {
 
     if (
         dungeon[player.row][player.col] === "T" &&
-        hasKey
+        hasKey &&
+        hasPassedDoor
     ) {
 
         gameWon = true;
@@ -107,77 +110,50 @@ document.addEventListener(
     "keydown",
     (event) => {
 
-        // ESC = PAUSE / RESUME
-
         if (event.key === "Escape") {
-
             togglePause();
-
             return;
         }
-
-
-        // R = RESTART
 
         if (
             event.key === "r" ||
             event.key === "R"
         ) {
-
             resetLevel();
-
             return;
         }
-
-
-        // STOP INPUT
 
         if (
             gameWon ||
             gamePaused
         ) {
-
             return;
         }
-
-
-        // MOVEMENT
 
         switch (event.key) {
 
             case "ArrowUp":
             case "w":
             case "W":
-
                 movePlayer(-1, 0);
-
                 break;
-
 
             case "ArrowDown":
             case "s":
             case "S":
-
                 movePlayer(1, 0);
-
                 break;
-
 
             case "ArrowLeft":
             case "a":
             case "A":
-
                 movePlayer(0, -1);
-
                 break;
-
 
             case "ArrowRight":
             case "d":
             case "D":
-
                 movePlayer(0, 1);
-
                 break;
         }
     }
@@ -188,78 +164,11 @@ document.addEventListener(
 // TIMER
 // ===============================
 
-let timerInterval =
-    setInterval(() => {
-
-        if (
-            gameStarted &&
-            !gameWon &&
-            !gamePaused &&
-            !trapTriggered
-        ) {
-
-            timer++;
-
-            updateUI();
-        }
-
-    }, 1000);
-
-
-// ===============================
-// RESET LEVEL
-// ===============================
-
-function resetLevel() {
+function startTimer() {
 
     clearInterval(
         timerInterval
     );
-
-
-    // RESET PLAYER
-
-    player = {
-        row: 1,
-        col: 1,
-        direction: "down"
-    };
-
-
-    // RESET GAME STATE
-
-    hasKey = false;
-
-    timer = 0;
-    moves = 0;
-
-    gameStarted = false;
-    gameWon = false;
-    gamePaused = false;
-    trapTriggered = false;
-
-
-    // HIDE SCREENS
-
-    winScreen.style.display =
-        "none";
-
-    pauseScreen.style.display =
-        "none";
-
-
-    // GENERATE NEW DUNGEON
-
-    dungeons[currentLevel] =
-        generateDungeon();
-
-
-    // RENDER
-
-    renderDungeon();
-
-
-    // RESTART TIMER
 
     timerInterval =
         setInterval(() => {
@@ -272,11 +181,52 @@ function resetLevel() {
             ) {
 
                 timer++;
-
                 updateUI();
             }
 
         }, 1000);
+}
+
+
+// ===============================
+// RESET LEVEL
+// ===============================
+
+function resetLevel() {
+
+    clearInterval(
+        timerInterval
+    );
+
+    player = {
+        row: 1,
+        col: 1,
+        direction: "down"
+    };
+
+    hasKey = false;
+    hasPassedDoor = false;
+
+    timer = 0;
+    moves = 0;
+
+    gameStarted = false;
+    gameWon = false;
+    gamePaused = false;
+    trapTriggered = false;
+
+    winScreen.style.display =
+        "none";
+
+    pauseScreen.style.display =
+        "none";
+
+    dungeons[currentLevel] =
+        generateDungeon(currentLevel);
+
+    renderDungeon();
+
+    startTimer();
 }
 
 
@@ -287,13 +237,11 @@ function resetLevel() {
 function togglePause() {
 
     if (gameWon) {
-
         return;
     }
 
     gamePaused =
         !gamePaused;
-
 
     if (gamePaused) {
 
@@ -312,29 +260,21 @@ function togglePause() {
 // BUTTONS
 // ===============================
 
-// RESTART
-
 restartButton.addEventListener(
     "click",
     () => {
-
         resetLevel();
     }
 );
 
 
-// PAUSE
-
 pauseButton.addEventListener(
     "click",
     () => {
-
         togglePause();
     }
 );
 
-
-// RESUME
 
 resumeButton.addEventListener(
     "click",
@@ -347,8 +287,6 @@ resumeButton.addEventListener(
     }
 );
 
-
-// NEXT LEVEL
 
 nextLevelButton.addEventListener(
     "click",
@@ -377,8 +315,6 @@ nextLevelButton.addEventListener(
 );
 
 
-// PLAY AGAIN
-
 playAgainButton.addEventListener(
     "click",
     () => {
@@ -395,3 +331,5 @@ playAgainButton.addEventListener(
 // ===============================
 
 renderDungeon();
+
+startTimer();
