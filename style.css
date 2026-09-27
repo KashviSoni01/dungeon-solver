@@ -1,386 +1,668 @@
-/* =========================================================
+/* =========================================
    RESET
-========================================================= */
+========================================= */
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
+
+
+:root {
+
+    --bg-dark: #050810;
+    --bg-panel: #0a101c;
+
+    --blue-dark: #101d30;
+    --blue-mid: #1b3048;
+    --blue-light: #385777;
+
+    --glow: #4d9dff;
+    --glow-soft: rgba(77, 157, 255, 0.25);
+
+    --gold: #ffc857;
+    --gold-bright: #ffe39a;
+
+    --red: #d94b63;
+    --pink: #ff7188;
+
+    --text: #dce8f5;
+    --muted: #71839a;
+
+    --border: #294463;
+}
+
+
+/* =========================================
+   BODY
+========================================= */
 
 html,
 body {
+
     width: 100%;
-    min-height: 100%;
+    height: 100%;
+
 }
 
+
 body {
+
     background:
         radial-gradient(
-            ellipse at 50% 45%,
-            #0a1b2c 0%,
-            #06121f 45%,
-            #020810 100%
+            circle at 50% 30%,
+            #101d30 0%,
+            #070c15 45%,
+            #03050a 100%
         );
 
-    color: #eef5ff;
+    color: var(--text);
 
     font-family:
         "Courier New",
-        Courier,
         monospace;
 
-    overflow-x: hidden;
+    overflow: hidden;
+
 }
 
 
-/* =========================================================
+/* =========================================
+   BACKGROUND ATMOSPHERE
+========================================= */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at center,
+            transparent 35%,
+            rgba(0, 0, 0, 0.65) 100%
+        );
+
+    z-index: -1;
+}
+
+
+/* =========================================
    GAME
-========================================================= */
+========================================= */
 
 .game {
-    width: 100%;
-    min-height: 100vh;
 
-    padding: 22px 4vw 24px;
+    width: 100%;
+    height: 100vh;
+
+    min-height: 0;
+
+    padding:
+        20px
+        25px
+        15px;
 
     display: flex;
+
     flex-direction: column;
-    align-items: center;
+
 }
 
 
-/* =========================================================
+/* =========================================
    HEADER
-========================================================= */
+========================================= */
 
 header {
-    width: min(1280px, 100%);
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 40px;
-
-    margin-bottom: 28px;
-}
-
-
-/* =========================================================
-   TITLE
-========================================================= */
-
-.title-area {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.title-icon {
-    width: 15px;
-    height: 15px;
 
     flex-shrink: 0;
 
-    background: #169de8;
-
-    transform: rotate(45deg);
-
-    box-shadow:
-        0 0 8px #159ce7,
-        0 0 20px rgba(21, 156, 231, 0.7);
-}
-
-h1 {
-    font-size: clamp(30px, 3.4vw, 48px);
-
-    line-height: 1;
-
-    letter-spacing: 3px;
-
-    color: #f5f7fb;
-
-    text-shadow:
-        0 2px 0 #182333,
-        0 0 12px rgba(255, 255, 255, 0.08);
-}
-
-
-/* =========================================================
-   STATS
-========================================================= */
-
-.stats {
     display: flex;
-    gap: 14px;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 25px;
+
+    margin: 0 auto 18px;
+
+    width: min(
+        1235px,
+        100%
+    );
+
+    padding-bottom: 16px;
+
+    border-bottom:
+        1px solid
+        rgba(77, 157, 255, 0.18);
 }
 
-.stat {
-    width: 125px;
-    height: 72px;
+
+.title-area {
 
     display: flex;
-    flex-direction: column;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+
+.title-icon {
+
+    width: 52px;
+    height: 52px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
     align-items: center;
     justify-content: center;
 
-    background:
-        linear-gradient(
-            145deg,
-            #0a1d30,
-            #06111d
-        );
+    color: var(--gold);
 
-    border: 1px solid #18547c;
+    border:
+        1px solid
+        var(--gold);
+
+    background:
+        rgba(255, 200, 87, 0.04);
 
     box-shadow:
-        inset 0 0 18px rgba(25, 115, 175, 0.08),
-        0 0 12px rgba(0, 108, 180, 0.08);
+        0 0 15px
+        rgba(255, 200, 87, 0.2);
+
+    animation:
+        titlePulse 2.5s
+        ease-in-out
+        infinite;
 }
 
-.stat span {
-    margin-bottom: 5px;
 
-    color: #6ea8d0;
+h1 {
 
-    font-size: 10px;
+    font-size:
+        clamp(
+            21px,
+            2.6vw,
+            34px
+        );
+
+    letter-spacing: 4px;
+
+    text-transform: uppercase;
+
+    color: #eaf4ff;
+
+    text-shadow:
+        0 0 12px
+        rgba(77, 157, 255, 0.35);
+}
+
+
+.subtitle {
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 9px;
 
     letter-spacing: 3px;
 }
 
-.stat strong {
-    color: #f1f6ff;
 
-    font-size: 21px;
+/* =========================================
+   STATS
+========================================= */
+
+.stats {
+
+    display: flex;
+
+    align-items: stretch;
+
+    gap: 9px;
+
+    flex-wrap: nowrap;
+}
+
+
+.stat {
+
+    min-width: 90px;
+
+    padding:
+        8px 13px;
+
+    border:
+        1px solid
+        rgba(77, 157, 255, 0.2);
+
+    background:
+        rgba(8, 15, 27, 0.85);
+
+    text-align: center;
+}
+
+
+.stat span {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: 8px;
 
     letter-spacing: 2px;
 }
 
 
-/* =========================================================
-   MAIN
-========================================================= */
+.stat strong {
 
-main {
-    width: 100%;
+    color: #dcecff;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-size: 13px;
+
+    letter-spacing: 1px;
 }
 
 
-/* =========================================================
+.level-info {
+
+    min-width: 165px;
+}
+
+
+.level-info span {
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.level-info strong {
+
+    color: var(--gold);
+}
+
+
+/* =========================================
+   MAIN
+========================================= */
+
+main {
+
+    flex: 1;
+
+    min-height: 0;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+/* =========================================
    DUNGEON FRAME
-========================================================= */
+========================================= */
 
 .dungeon-frame {
-    width: min(
-        76vh,
-        76vw,
-        780px
-    );
+
+    position: relative;
+
+    /*
+       The dungeon now depends on BOTH:
+       - viewport width
+       - viewport height
+
+       This prevents it from becoming
+       taller than the available screen.
+    */
+
+    width:
+        min(
+            720px,
+            88vw,
+            calc(100vh - 225px)
+        );
 
     aspect-ratio: 1 / 1;
 
-    padding: 9px;
+    flex-shrink: 1;
 
-    background: #04101b;
+    padding: 11px;
 
-    border: 2px solid #17628f;
+    background:
+        linear-gradient(
+            135deg,
+            #17283c,
+            #07101c 50%,
+            #14263b
+        );
+
+    border:
+        1px solid
+        #355676;
 
     box-shadow:
-        0 0 8px rgba(21, 150, 225, 0.5),
-        0 0 30px rgba(21, 150, 225, 0.2),
-        inset 0 0 25px rgba(0, 0, 0, 0.8);
+        0 0 0 3px #070d16,
+        0 0 0 4px #203b58,
+        0 0 40px
+        rgba(77, 157, 255, 0.16),
+        inset 0 0 30px
+        rgba(0, 0, 0, 0.65);
+
+    animation:
+        dungeonBreath 4s
+        ease-in-out
+        infinite;
 }
 
 
-/* =========================================================
-   DUNGEON
-========================================================= */
+.dungeon-glow {
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(77, 157, 255, 0.08),
+            transparent 65%
+        );
+
+    z-index: 2;
+}
+
+
+/* =========================================
+   DUNGEON GRID
+========================================= */
 
 #dungeon {
+
     width: 100%;
     height: 100%;
 
     display: grid;
 
     grid-template-columns:
-        repeat(10, minmax(0, 1fr));
+        repeat(10, 1fr);
 
     grid-template-rows:
-        repeat(10, minmax(0, 1fr));
+        repeat(10, 1fr);
 
-    gap: 2px;
-
-    background: #02070d;
-}
-
-
-/* =========================================================
-   CELLS
-========================================================= */
-
-#dungeon > div {
     position: relative;
-
-    min-width: 0;
-    min-height: 0;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
 
     overflow: hidden;
 }
 
 
-/* =========================================================
-   FLOOR
-========================================================= */
+/* =========================================
+   CELLS
+========================================= */
 
-.floor {
-    position: relative;
-
-    background:
-        radial-gradient(
-            circle at 50% 45%,
-            #102d47 0%,
-            #0a1e31 48%,
-            #06121f 100%
-        );
-
-    border: 1px solid #142f45;
-
-    box-shadow:
-        inset 0 0 14px rgba(0, 0, 0, 0.45);
-}
-
-.floor::before {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    background:
-        linear-gradient(
-            135deg,
-            transparent 47%,
-            rgba(71, 120, 150, 0.06) 48%,
-            transparent 51%
-        );
-
-    pointer-events: none;
-}
-
-
-/* =========================================================
-   WALL
-========================================================= */
-
+.floor,
 .wall {
+
     position: relative;
-
-    background:
-        linear-gradient(
-            135deg,
-            #414b5f 0%,
-            #323d50 48%,
-            #242e40 100%
-        );
-
-    border: 2px solid #566277;
-
-    box-shadow:
-        inset 2px 2px 0 rgba(255, 255, 255, 0.07),
-        inset -3px -3px 0 rgba(0, 0, 0, 0.5),
-        0 0 3px rgba(0, 0, 0, 0.8);
-}
-
-.wall::before {
-    content: "";
-
-    position: absolute;
-
-    inset: 5%;
-
-    opacity: 0.45;
-
-    background:
-        linear-gradient(
-            120deg,
-            transparent 20%,
-            rgba(8, 14, 24, 0.7) 21%,
-            transparent 23%,
-            transparent 52%,
-            rgba(8, 14, 24, 0.55) 53%,
-            transparent 55%
-        );
-
-    pointer-events: none;
-}
-
-.wall::after {
-    content: "";
-
-    position: absolute;
-
-    width: 40%;
-    height: 2px;
-
-    left: 10%;
-    top: 30%;
-
-    background: rgba(8, 14, 23, 0.45);
-
-    transform: rotate(-25deg);
-
-    box-shadow:
-        20px 15px 0 rgba(8, 14, 23, 0.3),
-        32px -8px 0 rgba(8, 14, 23, 0.25);
-}
-
-
-/* =========================================================
-   PLAYER
-========================================================= */
-
-/* =========================================================
-   PIXEL PLAYER
-========================================================= */
-
-.player {
-    position: absolute;
-
-    inset: 0;
 
     display: flex;
 
-    align-items: center;
     justify-content: center;
 
-    z-index: 30;
+    align-items: center;
 
-    background:
-        radial-gradient(
-            circle,
-            rgba(0, 157, 255, 0.24),
-            transparent 68%
-        );
-
-    box-shadow:
-        inset 0 0 18px rgba(0, 140, 255, 0.35),
-        0 0 16px rgba(0, 140, 255, 0.35);
+    min-width: 0;
+    min-height: 0;
 }
 
 
-/* =========================================================
-   PLAYER SPRITE SHEET
-========================================================= */
+/* =========================================
+   FLOOR
+========================================= */
+
+.floor {
+
+    background:
+        linear-gradient(
+            135deg,
+            #16263a,
+            #101c2c
+        );
+
+    border:
+        1px solid
+        rgba(70, 103, 133, 0.18);
+}
+
+
+.floor::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 3px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.015);
+
+    pointer-events: none;
+}
+
+
+/* =========================================
+   WALL
+========================================= */
+
+.wall {
+
+    background:
+        linear-gradient(
+            135deg,
+            #334b64 0%,
+            #1f344a 45%,
+            #142438 100%
+        );
+
+    border:
+        1px solid
+        #0c1827;
+
+    box-shadow:
+        inset 2px 2px 0
+        rgba(255,255,255,0.06),
+        inset -2px -2px 0
+        rgba(0,0,0,0.35);
+}
+
+
+.wall::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            transparent 45%,
+            rgba(255,255,255,0.025) 46%,
+            transparent 48%
+        );
+
+    opacity: 0.7;
+}
+
+
+/* =========================================
+   KEY
+========================================= */
+
+.key::before {
+
+    content: "🔑";
+
+    position: relative;
+
+    z-index: 5;
+
+    font-size:
+        clamp(
+            15px,
+            2.5vw,
+            28px
+        );
+
+    filter:
+        drop-shadow(
+            0 0 8px
+            rgba(255, 200, 87, 0.9)
+        );
+
+    animation:
+        keyGlow 1.4s
+        ease-in-out
+        infinite;
+}
+
+
+/* =========================================
+   TREASURE
+========================================= */
+
+.treasure::before {
+
+    content: "💎";
+
+    position: relative;
+
+    z-index: 5;
+
+    font-size:
+        clamp(
+            16px,
+            2.5vw,
+            30px
+        );
+
+    filter:
+        drop-shadow(
+            0 0 10px
+            rgba(255, 200, 87, 0.9)
+        );
+
+    animation:
+        treasureGlow 1.7s
+        ease-in-out
+        infinite;
+}
+
+
+/* =========================================
+   DOOR
+========================================= */
+
+.door::before {
+
+    content: "🚪";
+
+    position: relative;
+
+    z-index: 5;
+
+    font-size:
+        clamp(
+            16px,
+            2.5vw,
+            29px
+        );
+
+    filter:
+        drop-shadow(
+            0 0 7px
+            rgba(255, 80, 110, 0.7)
+        );
+}
+
+
+/* =========================================
+   TRAP
+========================================= */
+
+.trap::before {
+
+    content: "⚠";
+
+    position: relative;
+
+    z-index: 5;
+
+    color: var(--pink);
+
+    font-size:
+        clamp(
+            13px,
+            2.2vw,
+            24px
+        );
+
+    text-shadow:
+        0 0 8px
+        rgba(255, 70, 100, 0.8);
+
+    animation:
+        trapFlicker 1.2s
+        ease-in-out
+        infinite;
+}
+
+
+/* =========================================
+   PLAYER
+========================================= */
+
+.player {
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+
+    z-index: 10;
+}
+
 
 .playerSprite {
 
@@ -392,13 +674,6 @@ main {
 
     background-repeat: no-repeat;
 
-    /*
-       The SVG contains:
-
-       4 columns = walking frames
-       4 rows    = directions
-    */
-
     background-size:
         400% 400%;
 
@@ -406,608 +681,958 @@ main {
 
     filter:
         drop-shadow(
-            0 0 5px
-            rgba(0, 150, 255, 0.85)
-        )
-        drop-shadow(
-            0 0 12px
-            rgba(0, 130, 255, 0.5)
+            0 3px 4px
+            rgba(0, 0, 0, 0.65)
         );
-
-    user-select: none;
-
-    pointer-events: none;
 }
 
 
-/* =========================================================
-   DIRECTION
-========================================================= */
-
-/*
-   Sprite sheet rows:
-
-   row 1 → down
-   row 2 → left
-   row 3 → right
-   row 4 → up
-*/
-
 .face-down {
+
     background-position:
         0% 0%;
 }
 
+
 .face-left {
+
     background-position:
         0% 33.333%;
 }
 
+
 .face-right {
+
     background-position:
         0% 66.666%;
 }
 
+
 .face-up {
+
     background-position:
         0% 100%;
 }
 
 
-/* =========================================================
-   WALKING ANIMATION
-========================================================= */
-
 .playerSprite.walking {
-    animation:
-        playerWalk
-        0.32s
-        steps(4)
-        infinite;
+
+    animation: none;
 }
 
 
 @keyframes playerWalk {
 
     from {
-        background-position-x: 0%;
+
+        background-position-x:
+            0%;
+
     }
 
     to {
-        background-position-x: 100%;
+
+        background-position-x:
+            100%;
+
     }
+
 }
 
 
-/* =========================================================
-   KEY
-========================================================= */
-
-.floor.key {
-    background:
-        radial-gradient(
-            circle,
-            rgba(255, 191, 30, 0.3),
-            #101e2b 68%
-        );
-
-    border-color: #9d7318;
-
-    box-shadow:
-        inset 0 0 20px rgba(255, 182, 0, 0.2),
-        0 0 10px rgba(255, 185, 0, 0.35);
-}
-
-.floor.key::after {
-    content: "🔑";
-
-    font-size: clamp(20px, 3vw, 34px);
-
-    position: relative;
-
-    z-index: 4;
-
-    filter:
-        drop-shadow(0 0 5px #ffc52e)
-        drop-shadow(0 0 10px rgba(255, 180, 0, 0.7));
-}
-
-
-/* =========================================================
-   DOOR
-========================================================= */
-
-.floor.door {
-    background:
-        radial-gradient(
-            circle,
-            rgba(255, 55, 110, 0.3),
-            #111925 70%
-        );
-
-    border: 2px solid #b52b60;
-
-    box-shadow:
-        inset 0 0 18px rgba(255, 30, 90, 0.22),
-        0 0 12px rgba(255, 30, 90, 0.5);
-}
-
-.floor.door::after {
-    content: "🚪";
-
-    font-size: clamp(20px, 3vw, 34px);
-
-    position: relative;
-
-    z-index: 4;
-
-    filter:
-        drop-shadow(0 0 6px rgba(255, 60, 110, 0.8));
-}
-
-
-/* =========================================================
-   TREASURE
-========================================================= */
-
-.floor.treasure {
-    background:
-        radial-gradient(
-            circle,
-            rgba(255, 195, 40, 0.28),
-            #101c28 70%
-        );
-
-    border-color: #aa7a19;
-
-    box-shadow:
-        inset 0 0 22px rgba(255, 190, 0, 0.2),
-        0 0 14px rgba(255, 190, 0, 0.35);
-}
-
-.floor.treasure::after {
-    content: "💎";
-
-    font-size: clamp(22px, 3.4vw, 38px);
-
-    position: relative;
-
-    z-index: 4;
-
-    filter:
-        drop-shadow(0 0 6px #1ab8ff)
-        drop-shadow(0 0 12px rgba(0, 170, 255, 0.7));
-}
-
-
-/* =========================================================
-   TRAP
-========================================================= */
-
-.floor.trap {
-    background:
-        radial-gradient(
-            circle,
-            rgba(255, 32, 75, 0.22),
-            #101824 70%
-        );
-
-    border-color: #842044;
-
-    box-shadow:
-        inset 0 0 18px rgba(255, 0, 68, 0.15),
-        0 0 10px rgba(255, 0, 65, 0.3);
-}
-
-.floor.trap::after {
-    content: "🪤";
-
-    font-size: clamp(18px, 2.8vw, 31px);
-
-    position: relative;
-
-    z-index: 4;
-
-    filter:
-        drop-shadow(0 0 5px rgba(255, 40, 80, 0.75));
-}
-
-
-/* =========================================================
+/* =========================================
    CONTROLS
-========================================================= */
+========================================= */
 
 .controls {
-    width: min(780px, 100%);
+
+    flex-shrink: 0;
 
     display: flex;
 
     justify-content: center;
 
-    gap: 22px;
+    gap: 10px;
 
-    margin-top: 24px;
+    margin-top: 13px;
+
+    flex-wrap: wrap;
 }
 
-.controls button {
-    width: 250px;
-    height: 62px;
 
-    display: flex;
+button {
 
-    align-items: center;
-    justify-content: center;
-
-    gap: 15px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #102d48,
-            #071a2c
-        );
-
-    border: 1px solid #1b5e8a;
-
-    color: #edf5ff;
+    border: none;
 
     font-family:
         "Courier New",
-        Courier,
         monospace;
 
-    font-size: 15px;
-
-    font-weight: bold;
-
-    letter-spacing: 2px;
-
     cursor: pointer;
-
-    box-shadow:
-        inset 0 0 14px rgba(30, 130, 190, 0.08),
-        0 0 8px rgba(0, 100, 170, 0.12);
-
-    transition: 0.15s ease;
 }
 
-.controls button:hover {
-    background:
-        linear-gradient(
-            145deg,
-            #164363,
-            #0a243a
-        );
 
-    box-shadow:
-        0 0 16px rgba(0, 145, 225, 0.3);
-}
-
-.controls button:active {
-    transform: translateY(2px);
-}
-
-.controls .key {
-    width: 45px;
-    height: 36px;
+.controls button {
 
     display: flex;
 
     align-items: center;
-    justify-content: center;
 
-    background: #071522;
+    gap: 9px;
 
-    border: 1px solid #21618b;
+    padding:
+        8px 13px;
 
-    font-size: 13px;
+    color: #cbd9e8;
 
-    box-shadow:
-        inset 0 0 8px rgba(0, 100, 160, 0.2);
+    background:
+        #0b1421;
+
+    border:
+        1px solid
+        #263e58;
+
+    letter-spacing: 1px;
+
+    font-size: 9px;
+
+    transition:
+        0.2s ease;
 }
 
 
-/* =========================================================
-   OVERLAYS
-========================================================= */
+.controls button:hover {
 
-#pauseScreen,
-#winScreen {
+    color: white;
+
+    border-color:
+        var(--glow);
+
+    box-shadow:
+        0 0 12px
+        rgba(77,157,255,0.18);
+
+    transform:
+        translateY(-2px);
+}
+
+
+.key {
+
+    padding:
+        3px 6px;
+
+    border:
+        1px solid
+        #38516d;
+
+    color:
+        var(--gold);
+
+    background:
+        #101d2c;
+}
+
+
+/* =========================================
+   INSTRUCTIONS
+========================================= */
+
+.instructions {
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 9px;
+
+    color: #4f6278;
+
+    font-size: 8px;
+
+    letter-spacing: 1.3px;
+
+    text-align: center;
+}
+
+
+/* =========================================
+   OVERLAYS
+========================================= */
+
+.overlay {
+
     position: fixed;
 
     inset: 0;
 
     display: none;
 
-    align-items: center;
     justify-content: center;
 
-    background:
-        rgba(1, 7, 13, 0.88);
+    align-items: center;
 
-    backdrop-filter: blur(5px);
+    padding: 20px;
+
+    background:
+        rgba(2, 5, 10, 0.88);
+
+    backdrop-filter:
+        blur(5px);
 
     z-index: 100;
 }
 
 
-/* =========================================================
-   OVERLAY BOX
-========================================================= */
+/* =========================================
+   PAUSE / WIN / LEVEL SELECT
+========================================= */
 
 .pauseBox,
-.winBox {
-    width: min(450px, 90vw);
+.winBox,
+.levelSelectBox {
 
-    padding: 40px;
+    width:
+        min(
+            550px,
+            94vw
+        );
+
+    max-height:
+        90vh;
+
+    overflow-y:
+        auto;
+
+    padding: 38px;
 
     text-align: center;
 
     background:
         linear-gradient(
             145deg,
-            #0d253b,
-            #06121f
+            #101c2b,
+            #070d17
         );
 
-    border: 1px solid #23658e;
+    border:
+        1px solid
+        #355574;
 
     box-shadow:
-        0 0 25px rgba(0, 130, 210, 0.3),
-        inset 0 0 25px rgba(0, 0, 0, 0.45);
+        0 0 0 3px
+        rgba(5, 9, 16, 0.9),
+        0 0 40px
+        rgba(77, 157, 255, 0.15);
 }
+
+
+.screenHeader {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    text-align: left;
+
+    margin-bottom: 25px;
+}
+
+
+.screenIcon,
+.winIcon {
+
+    color:
+        var(--gold);
+
+    font-size: 30px;
+
+    text-shadow:
+        0 0 15px
+        rgba(255,200,87,0.55);
+}
+
 
 .pauseBox h2,
-.winBox h2 {
-    margin-bottom: 16px;
+.winBox h2,
+.levelSelectBox h2 {
 
-    color: #f4f7fb;
-
-    font-size: 27px;
+    color: #eaf4ff;
 
     letter-spacing: 3px;
+
+    font-size: 21px;
 }
+
 
 .pauseBox p,
-.winBox p {
-    margin-bottom: 25px;
+.winBox p,
+.levelSelectBox p {
 
-    color: #82a5c0;
+    margin-top: 10px;
 
-    line-height: 1.6;
+    color: #71839a;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
 }
 
+
+/* =========================================
+   OVERLAY BUTTONS
+========================================= */
+
 .pauseBox button,
-.winBox button {
-    min-width: 180px;
+.winBox button,
+.secondary-button {
 
-    margin: 6px;
+    width: 100%;
 
-    padding: 13px 22px;
+    padding: 13px;
+
+    margin-top: 15px;
+
+    color: #08101b;
 
     background:
-        linear-gradient(
-            145deg,
-            #123955,
-            #071a2b
-        );
-
-    border: 1px solid #246b9b;
-
-    color: #edf5ff;
-
-    font-family:
-        "Courier New",
-        Courier,
-        monospace;
+        var(--gold);
 
     font-weight: bold;
 
     letter-spacing: 2px;
 
-    cursor: pointer;
+    transition:
+        0.2s ease;
 }
+
 
 .pauseBox button:hover,
 .winBox button:hover {
+
+    background:
+        var(--gold-bright);
+
     box-shadow:
-        0 0 15px rgba(0, 145, 225, 0.3);
+        0 0 18px
+        rgba(255,200,87,0.35);
+
+    transform:
+        translateY(-2px);
 }
 
 
-/* =========================================================
-   WIN SCREEN
-========================================================= */
+.pauseBox .secondary-button,
+.winBox .secondary-button,
+.secondary-button {
 
-.winIcon {
-    margin-bottom: 15px;
+    color: #aabbd0;
 
-    font-size: 40px;
+    background:
+        #0c1725;
 
-    color: #ffc83d;
-
-    text-shadow:
-        0 0 10px #ffc83d,
-        0 0 25px rgba(255, 190, 40, 0.6);
+    border:
+        1px solid
+        #29435f;
 }
+
+
+.pauseBox .secondary-button:hover,
+.winBox .secondary-button:hover,
+.secondary-button:hover {
+
+    color: white;
+
+    background:
+        #122237;
+
+    border-color:
+        var(--glow);
+}
+
+
+/* =========================================
+   FINAL STATS
+========================================= */
 
 .finalStats {
-    display: flex;
 
-    justify-content: center;
+    display: grid;
 
-    gap: 35px;
+    grid-template-columns:
+        1fr 1fr;
 
-    margin: 24px 0;
+    margin-top: 25px;
+
+    border:
+        1px solid
+        #243b53;
 }
+
 
 .finalStats div {
-    min-width: 90px;
+
+    padding: 15px;
 }
 
+
+.finalStats div + div {
+
+    border-left:
+        1px solid
+        #243b53;
+}
+
+
 .finalStats span {
+
     display: block;
 
-    margin-bottom: 7px;
+    color:
+        #61758b;
 
-    color: #6d9abb;
-
-    font-size: 11px;
+    font-size: 9px;
 
     letter-spacing: 2px;
 }
 
-.finalStats strong {
-    color: #f4f7fb;
 
-    font-size: 22px;
+.finalStats strong {
+
+    display: block;
+
+    margin-top: 6px;
+
+    color:
+        #eaf4ff;
+
+    font-size: 20px;
 }
 
 
-/* =========================================================
-   TABLET
-========================================================= */
+/* =========================================
+   LEVEL LIST
+========================================= */
 
-@media (max-width: 900px) {
+.level-list {
 
-    .game {
-        padding:
-            18px
-            3vw
-            20px;
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            1fr
+        );
+
+    gap: 12px;
+
+    margin-bottom: 22px;
+}
+
+
+.level-card {
+
+    position: relative;
+
+    min-height: 160px;
+
+    padding: 18px 12px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #142438,
+            #09121e
+        );
+
+    border:
+        1px solid
+        #29435e;
+
+    color: var(--text);
+
+    transition:
+        0.25s ease;
+}
+
+
+.level-card.unlocked {
+
+    cursor: pointer;
+}
+
+
+.level-card.unlocked:hover {
+
+    transform:
+        translateY(-5px);
+
+    border-color:
+        var(--glow);
+
+    box-shadow:
+        0 0 20px
+        rgba(77,157,255,0.18);
+}
+
+
+.level-card.locked {
+
+    opacity: 0.42;
+}
+
+
+.level-number {
+
+    color:
+        var(--gold);
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+}
+
+
+.level-symbol {
+
+    font-size: 28px;
+
+    margin: 10px 0;
+}
+
+
+.level-card.locked .level-symbol {
+
+    color:
+        #596a7e;
+}
+
+
+.level-card h3 {
+
+    color:
+        #dcecff;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+    line-height: 1.5;
+}
+
+
+.level-card small {
+
+    color:
+        #71839a;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+}
+
+
+.level-card .difficulty {
+
+    margin-top: 7px;
+
+    color:
+        var(--gold);
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes titlePulse {
+
+    0%,
+    100% {
+
+        box-shadow:
+            0 0 10px
+            rgba(255,200,87,0.12);
     }
+
+    50% {
+
+        box-shadow:
+            0 0 22px
+            rgba(255,200,87,0.32);
+    }
+
+}
+
+
+@keyframes dungeonBreath {
+
+    0%,
+    100% {
+
+        box-shadow:
+            0 0 0 3px #070d16,
+            0 0 0 4px #203b58,
+            0 0 35px
+            rgba(77,157,255,0.13),
+            inset 0 0 30px
+            rgba(0,0,0,0.65);
+    }
+
+    50% {
+
+        box-shadow:
+            0 0 0 3px #070d16,
+            0 0 0 4px #294b6d,
+            0 0 48px
+            rgba(77,157,255,0.22),
+            inset 0 0 30px
+            rgba(0,0,0,0.65);
+    }
+
+}
+
+
+@keyframes keyGlow {
+
+    0%,
+    100% {
+
+        transform:
+            scale(1);
+    }
+
+    50% {
+
+        transform:
+            scale(1.1);
+    }
+
+}
+
+
+@keyframes treasureGlow {
+
+    0%,
+    100% {
+
+        transform:
+            scale(1);
+    }
+
+    50% {
+
+        transform:
+            scale(1.12);
+    }
+
+}
+
+
+@keyframes trapFlicker {
+
+    0%,
+    100% {
+
+        opacity:
+            0.65;
+    }
+
+    50% {
+
+        opacity:
+            1;
+    }
+
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (
+    max-width: 900px
+) {
 
     header {
-        flex-direction: column;
 
-        gap: 20px;
+        flex-direction:
+            column;
 
-        margin-bottom: 22px;
+        align-items:
+            flex-start;
+
     }
+
 
     .stats {
+
         width: 100%;
 
-        justify-content: center;
+        flex-wrap: wrap;
+
     }
 
-    .stat {
-        flex: 0 1 125px;
-    }
 
     .dungeon-frame {
-        width: min(
-            82vw,
-            82vh,
-            700px
-        );
+
+        width:
+            min(
+                88vw,
+                calc(100vh - 300px)
+            );
+
     }
+
 }
 
 
-/* =========================================================
+/* =========================================
    MOBILE
-========================================================= */
+========================================= */
 
-@media (max-width: 600px) {
+@media (
+    max-width: 600px
+) {
+
+    body {
+
+        overflow:
+            auto;
+
+    }
+
 
     .game {
+
+        height:
+            auto;
+
+        min-height:
+            100vh;
+
         padding:
-            14px
-            10px
-            18px;
+            15px 10px;
+
     }
 
-    .title-area {
-        gap: 13px;
+
+    header {
+
+        margin-bottom:
+            15px;
+
     }
 
-    h1 {
-        font-size: 27px;
-
-        letter-spacing: 2px;
-    }
 
     .title-icon {
-        width: 11px;
-        height: 11px;
+
+        width: 38px;
+
+        height: 38px;
+
     }
+
+
+    h1 {
+
+        font-size: 20px;
+
+        letter-spacing: 2px;
+
+    }
+
 
     .stats {
-        gap: 6px;
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
     }
 
-    .stat {
-        height: 62px;
+
+    .level-info {
 
         min-width: 0;
 
-        padding: 6px;
     }
 
-    .stat span {
-        font-size: 8px;
 
-        letter-spacing: 1px;
+    main {
+
+        flex: none;
+
     }
 
-    .stat strong {
-        font-size: 16px;
-    }
 
     .dungeon-frame {
-        width: min(
-            94vw,
-            94vh
-        );
 
-        padding: 6px;
+        width:
+            94vw;
+
+        max-width:
+            94vw;
+
+        padding:
+            7px;
+
     }
 
-    .controls {
-        flex-direction: column;
-
-        align-items: center;
-
-        margin-top: 18px;
-
-        gap: 10px;
-    }
 
     .controls button {
-        width: min(320px, 90vw);
 
-        height: 58px;
+        padding:
+            9px 11px;
+
+        font-size:
+            9px;
+
     }
+
+
+    .instructions {
+
+        flex-wrap:
+            wrap;
+
+        line-height:
+            1.7;
+
+    }
+
+
+    .level-list {
+
+        grid-template-columns:
+            1fr;
+
+        max-height:
+            55vh;
+
+        overflow-y:
+            auto;
+
+    }
+
+
+    .level-card {
+
+        min-height:
+            120px;
+
+    }
+
+
+    .pauseBox,
+    .winBox,
+    .levelSelectBox {
+
+        padding:
+            25px 20px;
+
+    }
+
 }
 
 
-/* =========================================================
-   SHORT SCREENS
-========================================================= */
+/* =========================================
+   VERY SHORT DESKTOP SCREENS
+========================================= */
 
-@media (max-height: 720px) {
+@media (
+    min-width: 601px
+) and (
+    max-height: 700px
+) {
 
     .game {
-        padding-top: 12px;
+
+        padding-top:
+            10px;
+
+        padding-bottom:
+            8px;
+
     }
+
 
     header {
-        margin-bottom: 14px;
+
+        margin-bottom:
+            8px;
+
+        padding-bottom:
+            8px;
+
     }
+
+
+    .title-icon {
+
+        width: 40px;
+
+        height: 40px;
+
+    }
+
 
     .dungeon-frame {
-        width: min(
-            67vh,
-            70vw
-        );
+
+        width:
+            min(
+                65vh,
+                600px,
+                88vw
+            );
+
+        padding:
+            7px;
+
     }
+
 
     .controls {
-        margin-top: 12px;
+
+        margin-top:
+            7px;
+
     }
 
-    .controls button {
-        height: 52px;
+
+    .instructions {
+
+        margin-top:
+            5px;
+
     }
+
+}
+
+
+.door.occupied::before {
+
+    display: none;
 }

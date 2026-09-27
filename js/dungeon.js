@@ -1,135 +1,628 @@
-// ===============================
-// CHECK DUNGEON SOLVABILITY
-// ===============================
+/* =========================================================
+   DUNGEON GENERATION
+   Real Maze + Key + Door + Treasure + Safe Traps + BFS
+========================================================= */
 
-function isDungeonSolvable(dungeon) {
 
-    const rows = dungeon.length;
-    const cols = dungeon[0].length;
+/* =========================================================
+   DIRECTIONS
+========================================================= */
 
-    const dr = [-1, 1, 0, 0];
-    const dc = [0, 0, -1, 1];
+const MAZE_DIRECTIONS = [
+    { row: -1, col: 0 },
+    { row: 1, col: 0 },
+    { row: 0, col: -1 },
+    { row: 0, col: 1 }
+];
 
-    /*
-        visited[row][col][hasKey][passedDoor]
 
-        We need to remember whether the
-        player has the key and whether
-        the player has passed through
-        the door.
-    */
+/* =========================================================
+   SHUFFLE
+========================================================= */
 
-    const visited =
-        Array.from(
-            { length: rows },
-            () =>
-                Array.from(
-                    { length: cols },
-                    () =>
-                        Array.from(
-                            { length: 2 },
-                            () => [false, false]
-                        )
-                )
-        );
+function shuffle(array) {
+
+    const result = [...array];
+
+    for (let i = result.length - 1; i > 0; i--) {
+
+        const j =
+            Math.floor(Math.random() * (i + 1));
+
+        [result[i], result[j]] =
+            [result[j], result[i]];
+    }
+
+    return result;
+}
+
+
+/* =========================================================
+   FIND PATH USING BFS
+========================================================= */
+
+function findPath(dungeon, start, target) {
 
     const queue = [
-        [1, 1, false, false]
+        {
+            row: start.row,
+            col: start.col
+        }
     ];
 
-    visited[1][1][0][0] = true;
+    const visited = new Set();
+
+    const previous = new Map();
+
+    const startKey =
+        `${start.row},${start.col}`;
+
+    visited.add(startKey);
 
 
     while (queue.length > 0) {
 
-        const [
-            row,
-            col,
-            hasKey,
-            passedDoor
-        ] = queue.shift();
+        const current = queue.shift();
+
+        const currentKey =
+            `${current.row},${current.col}`;
 
 
-        // ===============================
-        // WIN CONDITION
-        // ===============================
+        /*
+            Target found.
+        */
 
         if (
-            dungeon[row][col] === "T" &&
+            current.row === target.row &&
+            current.col === target.col
+        ) {
+
+            const path = [];
+
+            let key = currentKey;
+
+
+            while (key) {
+
+                const [
+                    row,
+                    col
+                ] =
+                    key
+                        .split(",")
+                        .map(Number);
+
+
+                path.push({
+                    row,
+                    col
+                });
+
+
+                key =
+                    previous.get(key);
+            }
+
+
+            return path.reverse();
+        }
+
+
+        for (
+            const direction
+            of MAZE_DIRECTIONS
+        ) {
+
+            const nextRow =
+                current.row +
+                direction.row;
+
+            const nextCol =
+                current.col +
+                direction.col;
+
+
+            /*
+                Outside dungeon.
+            */
+
+            if (
+                nextRow < 0 ||
+                nextRow >= dungeon.length ||
+                nextCol < 0 ||
+                nextCol >= dungeon[0].length
+            ) {
+                continue;
+            }
+
+
+            /*
+                Wall.
+            */
+
+            if (
+                dungeon[nextRow][nextCol] === "#"
+            ) {
+                continue;
+            }
+
+
+            const nextKey =
+                `${nextRow},${nextCol}`;
+
+
+            if (
+                visited.has(nextKey)
+            ) {
+                continue;
+            }
+
+
+            visited.add(nextKey);
+
+
+            previous.set(
+                nextKey,
+                currentKey
+            );
+
+
+            queue.push({
+                row: nextRow,
+                col: nextCol
+            });
+        }
+    }
+
+
+    return null;
+}
+
+
+/* =========================================================
+   GENERATE PERFECT MAZE
+========================================================= */
+
+function generateMaze() {
+
+    const rows = 10;
+    const cols = 10;
+
+
+    /*
+        Start with every cell as a wall.
+
+        # = wall
+        . = floor
+    */
+
+    const dungeon =
+        Array.from(
+            { length: rows },
+            () =>
+                Array(cols).fill("#")
+        );
+
+
+    /*
+        Maze cells exist at odd coordinates:
+
+        (1,1)
+        (1,3)
+        (1,5)
+        (1,7)
+
+        (3,1)
+        (3,3)
+        etc.
+    */
+
+    const visited = new Set();
+
+
+    function getKey(row, col) {
+        return `${row},${col}`;
+    }
+
+
+    function carve(row, col) {
+
+        visited.add(
+            getKey(row, col)
+        );
+
+
+        /*
+            Current maze cell becomes floor.
+        */
+
+        dungeon[row][col] = ".";
+
+
+        /*
+            Randomize directions.
+
+            This makes every generated dungeon
+            different.
+        */
+
+        const directions =
+            shuffle([
+                { row: -2, col: 0 },
+                { row: 2, col: 0 },
+                { row: 0, col: -2 },
+                { row: 0, col: 2 }
+            ]);
+
+
+        for (
+            const direction
+            of directions
+        ) {
+
+            const nextRow =
+                row + direction.row;
+
+            const nextCol =
+                col + direction.col;
+
+
+            /*
+                Keep inside the maze.
+
+                Valid maze cells:
+                1, 3, 5, 7
+            */
+
+            if (
+                nextRow < 1 ||
+                nextRow > 7 ||
+                nextCol < 1 ||
+                nextCol > 7
+            ) {
+                continue;
+            }
+
+
+            const nextKey =
+                getKey(
+                    nextRow,
+                    nextCol
+                );
+
+
+            if (
+                visited.has(nextKey)
+            ) {
+                continue;
+            }
+
+
+            /*
+                Remove the wall between
+                current cell and next cell.
+            */
+
+            const wallRow =
+                row +
+                direction.row / 2;
+
+            const wallCol =
+                col +
+                direction.col / 2;
+
+
+            dungeon[
+                wallRow
+            ][
+                wallCol
+            ] = ".";
+
+
+            /*
+                Continue carving.
+            */
+
+            carve(
+                nextRow,
+                nextCol
+            );
+        }
+    }
+
+
+    /*
+        Start at player position.
+    */
+
+    carve(1, 1);
+
+
+    return dungeon;
+}
+
+
+/* =========================================================
+   FIND ALL REACHABLE CELLS
+========================================================= */
+
+function getReachableCells(
+    dungeon,
+    start
+) {
+
+    const queue = [
+        {
+            row: start.row,
+            col: start.col,
+            distance: 0
+        }
+    ];
+
+
+    const visited = new Set();
+
+
+    const startKey =
+        `${start.row},${start.col}`;
+
+
+    visited.add(startKey);
+
+
+    const cells = [];
+
+
+    while (queue.length > 0) {
+
+        const current =
+            queue.shift();
+
+
+        cells.push(current);
+
+
+        for (
+            const direction
+            of MAZE_DIRECTIONS
+        ) {
+
+            const nextRow =
+                current.row +
+                direction.row;
+
+            const nextCol =
+                current.col +
+                direction.col;
+
+
+            if (
+                nextRow < 0 ||
+                nextRow >= dungeon.length ||
+                nextCol < 0 ||
+                nextCol >= dungeon[0].length
+            ) {
+                continue;
+            }
+
+
+            if (
+                dungeon[nextRow][nextCol] === "#"
+            ) {
+                continue;
+            }
+
+
+            const nextKey =
+                `${nextRow},${nextCol}`;
+
+
+            if (
+                visited.has(nextKey)
+            ) {
+                continue;
+            }
+
+
+            visited.add(nextKey);
+
+
+            queue.push({
+                row: nextRow,
+                col: nextCol,
+                distance:
+                    current.distance + 1
+            });
+        }
+    }
+
+
+    return cells;
+}
+
+
+/* =========================================================
+   BFS SOLVABILITY CHECK
+========================================================= */
+
+function isDungeonSolvable(dungeon) {
+
+    /*
+        State:
+
+        row
+        col
+        hasKey
+        passedDoor
+    */
+
+    const queue = [
+        {
+            row: 1,
+            col: 1,
+            hasKey: false,
+            passedDoor: false
+        }
+    ];
+
+
+    const visited = new Set();
+
+
+    while (queue.length > 0) {
+
+        const state =
+            queue.shift();
+
+
+        const stateKey =
+            `${state.row},${state.col},` +
+            `${state.hasKey},${state.passedDoor}`;
+
+
+        if (
+            visited.has(stateKey)
+        ) {
+            continue;
+        }
+
+
+        visited.add(stateKey);
+
+
+        let hasKey =
+            state.hasKey;
+
+        let passedDoor =
+            state.passedDoor;
+
+
+        const currentCell =
+            dungeon[
+                state.row
+            ][
+                state.col
+            ];
+
+
+        /*
+            Pick up key.
+        */
+
+        if (
+            currentCell === "K"
+        ) {
+
+            hasKey = true;
+        }
+
+
+        /*
+            Door.
+
+            The player cannot enter
+            the door without the key.
+        */
+
+        if (
+            currentCell === "D"
+        ) {
+
+            if (!hasKey) {
+                continue;
+            }
+
+
+            passedDoor = true;
+        }
+
+
+        /*
+            Treasure is only valid
+            after:
+
+            KEY + DOOR
+        */
+
+        if (
+            currentCell === "T" &&
             hasKey &&
             passedDoor
         ) {
+
             return true;
         }
 
 
-        // ===============================
-        // FOUR DIRECTIONS
-        // ===============================
-
-        for (let i = 0; i < 4; i++) {
+        for (
+            const direction
+            of MAZE_DIRECTIONS
+        ) {
 
             const nextRow =
-                row + dr[i];
+                state.row +
+                direction.row;
 
             const nextCol =
-                col + dc[i];
+                state.col +
+                direction.col;
 
 
-            // Outside dungeon
+            /*
+                Outside dungeon.
+            */
 
             if (
                 nextRow < 0 ||
-                nextRow >= rows ||
+                nextRow >= dungeon.length ||
                 nextCol < 0 ||
-                nextCol >= cols
+                nextCol >= dungeon[0].length
             ) {
                 continue;
             }
 
 
             const nextCell =
-                dungeon[nextRow][nextCol];
+                dungeon[
+                    nextRow
+                ][
+                    nextCol
+                ];
 
 
-            // ===============================
-            // WALL
-            // ===============================
-
-            if (nextCell === "W") {
-                continue;
-            }
-
-
-            // ===============================
-            // TRAP
-            // ===============================
-
-            if (nextCell === "X") {
-                continue;
-            }
-
-
-            // ===============================
-            // TREASURE
-            // ===============================
-
-            // Treasure cannot be reached
-            // before passing through the door.
+            /*
+                Wall.
+            */
 
             if (
-                nextCell === "T" &&
-                !passedDoor
+                nextCell === "#"
             ) {
                 continue;
             }
 
 
-            // ===============================
-            // DOOR
-            // ===============================
+            /*
+                IMPORTANT:
 
-            // Door requires key.
+                Traps are walkable during the
+                actual game, but BFS treats them
+                as blocked.
+
+                Therefore BFS asks:
+
+                "Is there a SAFE route?"
+            */
+
+            if (
+                nextCell === "X"
+            ) {
+                continue;
+            }
+
+
+            /*
+                Locked door.
+            */
 
             if (
                 nextCell === "D" &&
@@ -139,49 +632,12 @@ function isDungeonSolvable(dungeon) {
             }
 
 
-            // ===============================
-            // UPDATE STATE
-            // ===============================
-
-            const newHasKey =
-                hasKey ||
-                nextCell === "K";
-
-            const newPassedDoor =
-                passedDoor ||
-                nextCell === "D";
-
-
-            const keyState =
-                newHasKey ? 1 : 0;
-
-            const doorState =
-                newPassedDoor ? 1 : 0;
-
-
-            // Already visited with
-            // the same state.
-
-            if (
-                visited[nextRow][nextCol]
-                    [keyState]
-                    [doorState]
-            ) {
-                continue;
-            }
-
-
-            visited[nextRow][nextCol]
-                [keyState]
-                [doorState] = true;
-
-
-            queue.push([
-                nextRow,
-                nextCol,
-                newHasKey,
-                newPassedDoor
-            ]);
+            queue.push({
+                row: nextRow,
+                col: nextCol,
+                hasKey,
+                passedDoor
+            });
         }
     }
 
@@ -190,53 +646,168 @@ function isDungeonSolvable(dungeon) {
 }
 
 
-// ===============================
-// DISTANCE
-// ===============================
+/* =========================================================
+   PLACE OBJECTIVES ON A SINGLE SAFE PATH
+========================================================= */
 
-function getDistance(
-    row1,
-    col1,
-    row2,
-    col2
+function placeObjectives(
+    dungeon,
+    path
 ) {
 
-    return (
-        Math.abs(row1 - row2) +
-        Math.abs(col1 - col2)
-    );
+    /*
+        We need a reasonably long path.
+
+        Example:
+
+        START
+          ↓
+          ↓
+        KEY
+          ↓
+          ↓
+        DOOR
+          ↓
+          ↓
+        TREASURE
+    */
+
+    if (
+        path.length < 12
+    ) {
+        return false;
+    }
+
+
+    /*
+        Key around 30% of the route.
+    */
+
+    const keyIndex =
+        Math.floor(
+            path.length * 0.30
+        );
+
+
+    /*
+        Door around 60%.
+    */
+
+    const doorIndex =
+        Math.floor(
+            path.length * 0.60
+        );
+
+
+    /*
+        Treasure near the end.
+    */
+
+    const treasureIndex =
+        Math.floor(
+            path.length * 0.90
+        );
+
+
+    /*
+        Make sure indices are properly
+        separated.
+    */
+
+    if (
+        keyIndex <= 0 ||
+        doorIndex <= keyIndex ||
+        treasureIndex <= doorIndex
+    ) {
+        return false;
+    }
+
+
+    const key =
+        path[keyIndex];
+
+    const door =
+        path[doorIndex];
+
+    const treasure =
+        path[treasureIndex];
+
+
+    /*
+        Place the objects.
+    */
+
+    dungeon[
+        key.row
+    ][
+        key.col
+    ] = "K";
+
+
+    dungeon[
+        door.row
+    ][
+        door.col
+    ] = "D";
+
+
+    dungeon[
+        treasure.row
+    ][
+        treasure.col
+    ] = "T";
+
+
+    return {
+        key,
+        door,
+        treasure
+    };
 }
 
 
-// ===============================
-// RANDOM FLOOR CELL
-// ===============================
+/* =========================================================
+   PLACE TRAPS
+========================================================= */
 
-function getRandomFloorCell(
+function placeTraps(
     dungeon,
-    minRow,
-    maxRow,
-    minCol,
-    maxCol,
-    startRow = null,
-    startCol = null,
-    minDistance = 0
+    safePath,
+    trapCount
 ) {
+
+    /*
+        Convert safe path into a Set
+        for quick lookup.
+    */
+
+    const safePathSet =
+        new Set(
+            safePath.map(
+                cell =>
+                    `${cell.row},${cell.col}`
+            )
+        );
+
 
     const candidates = [];
 
 
     for (
-        let row = minRow;
-        row <= maxRow;
+        let row = 1;
+        row < dungeon.length - 1;
         row++
     ) {
 
         for (
-            let col = minCol;
-            col <= maxCol;
+            let col = 1;
+            col < dungeon[0].length - 1;
             col++
         ) {
+
+            /*
+                Only normal floor cells.
+            */
 
             if (
                 dungeon[row][col] !== "."
@@ -245,26 +816,30 @@ function getRandomFloorCell(
             }
 
 
-            // Distance requirement
+            /*
+                NEVER put a trap
+                on the guaranteed route.
+            */
 
             if (
-                startRow !== null &&
-                startCol !== null
+                safePathSet.has(
+                    `${row},${col}`
+                )
             ) {
+                continue;
+            }
 
-                const distance =
-                    getDistance(
-                        startRow,
-                        startCol,
-                        row,
-                        col
-                    );
 
-                if (
-                    distance < minDistance
-                ) {
-                    continue;
-                }
+            /*
+                Never put a trap
+                on the starting cell.
+            */
+
+            if (
+                row === 1 &&
+                col === 1
+            ) {
+                continue;
             }
 
 
@@ -276,401 +851,194 @@ function getRandomFloorCell(
     }
 
 
-    if (
-        candidates.length === 0
-    ) {
-        return null;
-    }
+    const shuffled =
+        shuffle(candidates);
 
-
-    const randomIndex =
-        Math.floor(
-            Math.random() *
-            candidates.length
-        );
-
-
-    return candidates[randomIndex];
-}
-
-
-// ===============================
-// CREATE BASE DUNGEON
-// ===============================
-
-function createBaseDungeon(
-    rows,
-    cols,
-    barrierCol,
-    doorRow,
-    wallChance
-) {
-
-    const dungeon = [];
-
-
-    // ===============================
-    // CREATE ALL FLOOR
-    // ===============================
-
-    for (
-        let row = 0;
-        row < rows;
-        row++
-    ) {
-
-        dungeon[row] = [];
-
-        for (
-            let col = 0;
-            col < cols;
-            col++
-        ) {
-
-            // Outer border
-
-            if (
-                row === 0 ||
-                row === rows - 1 ||
-                col === 0 ||
-                col === cols - 1
-            ) {
-
-                dungeon[row][col] = "W";
-
-            } else {
-
-                dungeon[row][col] = ".";
-            }
-        }
-    }
-
-
-    // ===============================
-    // CENTRAL WALL
-    // ===============================
-
-    for (
-        let row = 1;
-        row < rows - 1;
-        row++
-    ) {
-
-        dungeon[row][barrierCol] = "W";
-    }
-
-
-    // ===============================
-    // ONE DOOR
-    // ===============================
-
-    dungeon[doorRow][barrierCol] =
-        "D";
-
-
-    // ===============================
-    // GUARANTEED CORRIDOR
-    // ===============================
 
     /*
-        Left side corridor:
-
-        Player → → → → Door
-
-        Right side corridor:
-
-        Door → → → → Treasure area
-
-        These corridors make the basic
-        dungeon structure reliable.
+        Add requested number of traps.
     */
 
     for (
-        let col = 1;
-        col < barrierCol;
-        col++
+        let i = 0;
+        i < trapCount &&
+        i < shuffled.length;
+        i++
     ) {
 
-        dungeon[doorRow][col] = ".";
+        const trap =
+            shuffled[i];
+
+
+        dungeon[
+            trap.row
+        ][
+            trap.col
+        ] = "X";
     }
-
-
-    for (
-        let col = barrierCol + 1;
-        col < cols - 1;
-        col++
-    ) {
-
-        dungeon[doorRow][col] = ".";
-    }
-
-
-    // ===============================
-    // RANDOM INTERNAL WALLS
-    // ===============================
-
-    for (
-        let row = 1;
-        row < rows - 1;
-        row++
-    ) {
-
-        for (
-            let col = 1;
-            col < cols - 1;
-            col++
-        ) {
-
-            // Never touch central barrier
-
-            if (
-                col === barrierCol
-            ) {
-                continue;
-            }
-
-
-            // Never block the guaranteed
-            // horizontal corridor.
-
-            if (
-                row === doorRow
-            ) {
-                continue;
-            }
-
-
-            if (
-                Math.random() <
-                wallChance
-            ) {
-
-                dungeon[row][col] = "W";
-            }
-        }
-    }
-
-
-    return dungeon;
 }
 
 
-// ===============================
-// GENERATE DUNGEON
-// ===============================
+/* =========================================================
+   MAIN DUNGEON GENERATOR
+========================================================= */
 
-function generateDungeon(level) {
+function generateDungeon(
+    level = 0
+) {
 
-    let wallChance;
+    /*
+        Different trap counts
+        for different levels.
+    */
+
     let trapCount;
 
 
-    // ===============================
-    // DIFFICULTY
-    // ===============================
-
     if (level === 0) {
 
-        wallChance = 0.12;
-        trapCount = 3;
+        trapCount = 2;
 
     } else if (level === 1) {
 
-        wallChance = 0.18;
-        trapCount = 5;
+        trapCount = 4;
 
     } else {
 
-        wallChance = 0.23;
-        trapCount = 7;
+        trapCount = 6;
     }
 
 
-    // ===============================
-    // DUNGEON SIZE
-    // ===============================
+    /*
+        Try multiple random mazes.
 
-    const rows = 10;
-    const cols = 10;
+        If one doesn't have a long enough
+        route, generate another.
+    */
 
+    for (
+        let attempt = 0;
+        attempt < 500;
+        attempt++
+    ) {
 
-    // Central wall
-
-    const barrierCol = 5;
-
-
-    // Door in the wall
-
-    const doorRow = 5;
-
-
-    // ===============================
-    // GENERATE UNTIL VALID
-    // ===============================
-
-    while (true) {
+        /*
+            Generate a brand-new
+            perfect maze.
+        */
 
         const dungeon =
-            createBaseDungeon(
-                rows,
-                cols,
-                barrierCol,
-                doorRow,
-                wallChance
-            );
+            generateMaze();
 
 
-        // ===============================
-        // PLAYER START
-        // ===============================
+        const start = {
+            row: 1,
+            col: 1
+        };
 
-        dungeon[1][1] = ".";
 
+        /*
+            Find all reachable cells.
+        */
 
-        // ===============================
-        // KEY
-        // ===============================
-
-        const keyPosition =
-            getRandomFloorCell(
+        const reachable =
+            getReachableCells(
                 dungeon,
-
-                1,
-                rows - 2,
-
-                1,
-                barrierCol - 1,
-
-                1,
-                1,
-
-                4
+                start
             );
 
 
-        if (!keyPosition) {
-            continue;
-        }
+        /*
+            Find the farthest cell.
+
+            Because this is a perfect maze,
+            the path from start to this cell
+            is unique.
+        */
+
+        reachable.sort(
+            (a, b) =>
+                b.distance -
+                a.distance
+        );
 
 
-        dungeon[
-            keyPosition.row
-        ][
-            keyPosition.col
-        ] = "K";
+        const farthest =
+            reachable[0];
 
-
-        // ===============================
-        // TREASURE
-        // ===============================
-
-        const treasurePosition =
-            getRandomFloorCell(
-                dungeon,
-
-                1,
-                rows - 2,
-
-                barrierCol + 1,
-                cols - 2,
-
-                doorRow,
-                barrierCol,
-
-                3
-            );
-
-
-        if (!treasurePosition) {
-            continue;
-        }
-
-
-        dungeon[
-            treasurePosition.row
-        ][
-            treasurePosition.col
-        ] = "T";
-
-
-        // ===============================
-        // TRAPS
-        // ===============================
-
-        let trapsPlaced = 0;
-        let attempts = 0;
-
-        const maxAttempts = 500;
-
-
-        while (
-            trapsPlaced < trapCount &&
-            attempts < maxAttempts
-        ) {
-
-            attempts++;
-
-
-            const row =
-                Math.floor(
-                    Math.random() *
-                    (rows - 2)
-                ) + 1;
-
-            const col =
-                Math.floor(
-                    Math.random() *
-                    (cols - 2)
-                ) + 1;
-
-
-            // Never trap the player.
-
-            if (
-                row === 1 &&
-                col === 1
-            ) {
-                continue;
-            }
-
-
-            // Never trap the door.
-
-            if (
-                row === doorRow &&
-                col === barrierCol
-            ) {
-                continue;
-            }
-
-
-            // Never replace important objects.
-
-            if (
-                dungeon[row][col] !== "."
-            ) {
-                continue;
-            }
-
-
-            dungeon[row][col] = "X";
-
-            trapsPlaced++;
-        }
-
-
-        // Couldn't place all traps.
 
         if (
-            trapsPlaced < trapCount
+            !farthest ||
+            farthest.distance < 12
         ) {
             continue;
         }
 
 
-        // ===============================
-        // FINAL SOLVABILITY CHECK
-        // ===============================
+        /*
+            Find the actual path from
+            player to farthest cell.
+        */
+
+        const safePath =
+            findPath(
+                dungeon,
+                start,
+                farthest
+            );
+
+
+        if (
+            !safePath
+        ) {
+            continue;
+        }
+
+
+        /*
+            Put:
+
+            KEY
+            DOOR
+            TREASURE
+
+            directly on this path.
+        */
+
+        const objectives =
+            placeObjectives(
+                dungeon,
+                safePath
+            );
+
+
+        if (
+            !objectives
+        ) {
+            continue;
+        }
+
+
+        /*
+            Put traps ONLY away
+            from the safe path.
+        */
+
+        placeTraps(
+            dungeon,
+            safePath,
+            trapCount
+        );
+
+
+        /*
+            Final BFS verification.
+
+            This must return TRUE.
+
+            If not, destroy this dungeon
+            and generate another one.
+        */
 
         if (
             isDungeonSolvable(
@@ -681,4 +1049,96 @@ function generateDungeon(level) {
             return dungeon;
         }
     }
+
+
+    /*
+        This should almost never be reached,
+        but provides a guaranteed valid
+        dungeon if something goes wrong.
+    */
+
+    return createFallbackDungeon();
+}
+
+
+/* =========================================================
+   GUARANTEED FALLBACK DUNGEON
+========================================================= */
+
+function createFallbackDungeon() {
+
+    /*
+        # = wall
+        . = floor
+
+        The route is:
+
+        PLAYER
+           ↓
+           ↓
+         KEY
+           ↓
+           ↓
+         DOOR
+           ↓
+           ↓
+       TREASURE
+    */
+
+    const dungeon = [
+
+        [
+            "#","#","#","#","#","#","#","#","#","#"
+        ],
+
+        [
+            "#",".","#","#","#","#","#","#","#","#"
+        ],
+
+        [
+            "#",".","#",".",".",".",".",".","#","#"
+        ],
+
+        [
+            "#",".","#",".","#","#","#",".","#","#"
+        ],
+
+        [
+            "#",".",".","K","#","D","#",".","#","#"
+        ],
+
+        [
+            "#","#","#",".","#",".","#",".","#","#"
+        ],
+
+        [
+            "#","#","#",".","#",".","#",".","#","#"
+        ],
+
+        [
+            "#","#","#",".","#",".","#",".","#","#"
+        ],
+
+        [
+            "#","#","#",".","#",".","#",".","T","#"
+        ],
+
+        [
+            "#","#","#","#","#","#","#","#","#","#"
+        ]
+
+    ];
+
+
+    /*
+        Add traps away from the
+        guaranteed route.
+    */
+
+    dungeon[2][4] = "X";
+
+    dungeon[7][5] = "X";
+
+
+    return dungeon;
 }

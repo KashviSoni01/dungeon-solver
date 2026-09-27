@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -15,40 +16,96 @@
         rel="stylesheet"
         href="style.css"
     >
+
 </head>
+
 
 <body>
 
+    <!-- =========================================
+         MAIN GAME
+    ========================================== -->
+
     <div class="game">
 
-        <!-- =========================
+        <!-- =====================================
              HEADER
-        ========================== -->
+        ====================================== -->
 
         <header>
 
             <div class="title-area">
-                <div class="title-icon">◆</div>
 
-                <h1>Dungeon Solver</h1>
+                <div class="title-icon">
+                    ◆
+                </div>
+
+                <div>
+
+                    <h1>
+                        Dungeon Solver
+                    </h1>
+
+                    <p class="subtitle">
+                        ESCAPE THE DUNGEON
+                    </p>
+
+                </div>
+
             </div>
 
 
             <div class="stats">
 
                 <div class="stat">
-                    <span>TIME</span>
-                    <strong id="timer">00:00</strong>
+
+                    <span>
+                        TIME
+                    </span>
+
+                    <strong id="timer">
+                        00:00
+                    </strong>
+
                 </div>
 
-                <div class="stat">
-                    <span>MOVES</span>
-                    <strong id="moves">0</strong>
-                </div>
 
                 <div class="stat">
-                    <span>LEVEL</span>
-                    <strong id="level">1 / 3</strong>
+
+                    <span>
+                        MOVES
+                    </span>
+
+                    <strong id="moves">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <span>
+                        LEVEL
+                    </span>
+
+                    <strong id="level">
+                        1 / 3
+                    </strong>
+
+                </div>
+
+
+                <div class="stat level-info">
+
+                    <span id="levelName">
+                        THE FORGOTTEN CELL
+                    </span>
+
+                    <strong id="levelDifficulty">
+                        EASY
+                    </strong>
+
                 </div>
 
             </div>
@@ -56,13 +113,15 @@
         </header>
 
 
-        <!-- =========================
-             DUNGEON
-        ========================== -->
+        <!-- =====================================
+             GAME AREA
+        ====================================== -->
 
         <main>
 
             <div class="dungeon-frame">
+
+                <div class="dungeon-glow"></div>
 
                 <div id="dungeon"></div>
 
@@ -71,27 +130,111 @@
         </main>
 
 
-        <!-- =========================
+        <!-- =====================================
              CONTROLS
-        ========================== -->
+        ====================================== -->
 
         <div class="controls">
 
             <button id="restart">
 
-                <span class="key">R</span>
-
-                <span>RESTART</span>
+                <span>
+                    RESTART
+                </span>
 
             </button>
 
 
             <button id="pause">
 
-                <span class="key">ESC</span>
+                <span>
+                    PAUSE
+                </span>
 
-                <span>PAUSE</span>
+            </button>
 
+
+            <button id="levelSelectButton">
+
+                <span>
+                    LEVELS
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <div class="instructions">
+
+            <span>
+                WASD / ARROW KEYS
+            </span>
+
+            <span>
+                •
+            </span>
+
+            <span>
+                FIND THE KEY
+            </span>
+
+            <span>
+                •
+            </span>
+
+            <span>
+                REACH THE TREASURE
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         LEVEL SELECT
+    ========================================== -->
+
+    <div
+        id="levelSelectScreen"
+        class="overlay"
+    >
+
+        <div class="levelSelectBox">
+
+            <div class="screenHeader">
+
+                <div class="screenIcon">
+                    ◆
+                </div>
+
+                <div>
+
+                    <h2>
+                        SELECT DUNGEON
+                    </h2>
+
+                    <p>
+                        Choose your next challenge
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="levelList"
+                class="level-list"
+            ></div>
+
+
+            <button
+                id="closeLevelSelect"
+                class="secondary-button"
+            >
+                RETURN TO DUNGEON
             </button>
 
         </div>
@@ -99,22 +242,40 @@
     </div>
 
 
-    <!-- =========================
+    <!-- =========================================
          PAUSE SCREEN
-    ========================== -->
+    ========================================== -->
 
-    <div id="pauseScreen">
+    <div
+        id="pauseScreen"
+        class="overlay"
+    >
 
         <div class="pauseBox">
 
-            <h2>GAME PAUSED</h2>
+            <div class="screenIcon">
+                ◆
+            </div>
+
+            <h2>
+                GAME PAUSED
+            </h2>
 
             <p>
                 The dungeon awaits your return.
             </p>
 
+
             <button id="resume">
                 RESUME
+            </button>
+
+
+            <button
+                id="pauseLevelSelect"
+                class="secondary-button"
+            >
+                LEVEL SELECT
             </button>
 
         </div>
@@ -122,11 +283,14 @@
     </div>
 
 
-    <!-- =========================
+    <!-- =========================================
          WIN SCREEN
-    ========================== -->
+    ========================================== -->
 
-    <div id="winScreen">
+    <div
+        id="winScreen"
+        class="overlay"
+    >
 
         <div class="winBox">
 
@@ -134,7 +298,9 @@
                 ◆
             </div>
 
-            <h2>LEVEL COMPLETE</h2>
+            <h2>
+                LEVEL COMPLETE
+            </h2>
 
             <p>
                 You escaped the dungeon!
@@ -144,13 +310,28 @@
             <div class="finalStats">
 
                 <div>
-                    <span>TIME</span>
-                    <strong id="winTime">00:00</strong>
+
+                    <span>
+                        TIME
+                    </span>
+
+                    <strong id="winTime">
+                        00:00
+                    </strong>
+
                 </div>
 
+
                 <div>
-                    <span>MOVES</span>
-                    <strong id="winMoves">0</strong>
+
+                    <span>
+                        MOVES
+                    </span>
+
+                    <strong id="winMoves">
+                        0
+                    </strong>
+
                 </div>
 
             </div>
@@ -161,17 +342,34 @@
             </button>
 
 
-            <button id="playAgain">
+            <button
+                id="winLevelSelect"
+                class="secondary-button"
+            >
+                LEVEL SELECT
+            </button>
+
+
+            <button
+                id="playAgain"
+                class="secondary-button"
+            >
                 PLAY AGAIN
             </button>
 
         </div>
 
     </div>
-<script src="js/dungeon.js"></script>
-<script src="js/player.js"></script>
-<script src="js/ui.js"></script>
-<script src="script.js"></script>
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
+
+    <script src="js/dungeon.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="script.js"></script>
 
 </body>
 

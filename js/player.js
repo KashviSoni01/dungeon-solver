@@ -1,27 +1,29 @@
-// ===============================
-// PLAYER STATE
-// ===============================
+/* =========================================================
+   PLAYER STATE
+========================================================= */
 
-player = {
+let player = {
     row: 1,
     col: 1,
-    direction: "down",
-    isMoving: false
+    direction: "down"
 };
 
 let hasKey = false;
 let hasPassedDoor = false;
-
 let trapTriggered = false;
 
+let isPlayerMoving = false;
+let movementAnimationTimer = null;
 
-// ===============================
-// MOVE PLAYER
-// ===============================
+
+/* =========================================================
+   MOVE PLAYER
+========================================================= */
 
 function movePlayer(
     rowChange,
-    colChange
+    colChange,
+    direction
 ) {
 
     if (
@@ -32,8 +34,10 @@ function movePlayer(
         return;
     }
 
+
     const dungeon =
         dungeons[currentLevel];
+
 
     const newRow =
         player.row + rowChange;
@@ -42,9 +46,9 @@ function movePlayer(
         player.col + colChange;
 
 
-    // ===============================
-    // CHECK BOUNDARIES
-    // ===============================
+    /* =========================================
+       BOUNDARY
+    ========================================= */
 
     if (
         newRow < 0 ||
@@ -60,137 +64,181 @@ function movePlayer(
         dungeon[newRow][newCol];
 
 
-    // ===============================
-    // WALL
-    // ===============================
+    /* =========================================
+       WALL
+    ========================================= */
 
-    if (nextCell === "W") {
+    if (
+        nextCell === "#"
+    ) {
+
         return;
     }
 
 
-    // ===============================
-    // DOOR
-    // ===============================
+    /* =========================================
+       LOCKED DOOR
+    ========================================= */
 
     if (
         nextCell === "D" &&
         !hasKey
     ) {
-        return;
-    }
 
-    if (
-        nextCell === "T" &&
-        !hasPassedDoor
-    ) {
         return;
     }
 
 
-    // ===============================
-    // MOVE
-    // ===============================
+    /* =========================================
+       MOVE
+    ========================================= */
 
     player.row = newRow;
-player.col = newCol;
-
-player.isMoving = true;
-
-if (rowChange === -1) {
-    player.direction = "up";
-} else if (rowChange === 1) {
-    player.direction = "down";
-} else if (colChange === -1) {
-    player.direction = "left";
-} else if (colChange === 1) {
-    player.direction = "right";
-}
+    player.col = newCol;
 
 
-    // ===============================
-    // UPDATE DIRECTION
-    // ===============================
+    /* =========================================
+       DIRECTION
+    ========================================= */
 
-    if (rowChange === -1) {
+    player.direction =
+        direction;
 
-        player.direction = "up";
-
-    } else if (rowChange === 1) {
-
-        player.direction = "down";
-
-    } else if (colChange === -1) {
-
-        player.direction = "left";
-
-    } else if (colChange === 1) {
-
-        player.direction = "right";
-    }
-
-
-    // ===============================
-    // START GAME
-    // ===============================
-
-    if (!gameStarted) {
-
-        gameStarted = true;
-    }
 
     moves++;
 
 
-    // ===============================
-    // PICK UP KEY
-    // ===============================
+    /* =========================================
+       START ANIMATION
+    ========================================= */
 
-    if (nextCell === "K") {
+    isPlayerMoving = true;
+
+
+    clearTimeout(
+        movementAnimationTimer
+    );
+
+
+    movementAnimationTimer =
+        setTimeout(
+            () => {
+
+                isPlayerMoving = false;
+
+                renderDungeon();
+
+            },
+            180
+        );
+
+
+    /* =========================================
+       KEY
+    ========================================= */
+
+    if (
+        nextCell === "K"
+    ) {
 
         hasKey = true;
 
-        dungeon[newRow][newCol] = ".";
+        dungeon[
+            newRow
+        ][
+            newCol
+        ] = ".";
     }
 
-    if (nextCell === "D") {
+
+    /* =========================================
+       DOOR
+    ========================================= */
+
+    if (
+        nextCell === "D" &&
+        hasKey
+    ) {
+
         hasPassedDoor = true;
+
+        dungeon[
+            newRow
+        ][
+            newCol
+        ] = ".";
     }
 
 
-    // ===============================
-    // TRAP
-    // ===============================
+    /* =========================================
+       TRAP
+    ========================================= */
 
-    if (nextCell === "X") {
+    if (
+        nextCell === "X"
+    ) {
 
         trapTriggered = true;
 
         renderDungeon();
 
-        setTimeout(() => {
 
-            alert(
-                "💀 You stepped on a trap!"
-            );
+        setTimeout(
+            () => {
 
-            resetLevel();
+                alert(
+                    "You stepped on a trap!"
+                );
 
-        }, 200);
+                resetLevel();
+
+            },
+            100
+        );
+
 
         return;
     }
 
 
-    // ===============================
-    // UPDATE SCREEN
-    // ===============================
+    /* =========================================
+       RENDER
+    ========================================= */
 
-renderDungeon();
-checkWin();
-
-setTimeout(() => {
-    player.isMoving = false;
     renderDungeon();
-}, 350);
+
+
+    /* =========================================
+       WIN
+    ========================================= */
+
+    checkWin();
+}
+
+
+/* =========================================================
+   RESET PLAYER
+========================================================= */
+
+function resetPlayer() {
+
+    clearTimeout(
+        movementAnimationTimer
+    );
+
+
+    player = {
+        row: 1,
+        col: 1,
+        direction: "down"
+    };
+
+
+    hasKey = false;
+
+    hasPassedDoor = false;
+
+    trapTriggered = false;
+
+    isPlayerMoving = false;
 }

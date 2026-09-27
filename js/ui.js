@@ -1,13 +1,23 @@
-// ===============================
-// RENDER DUNGEON
-// ===============================
+/* =========================================================
+   RENDER DUNGEON
+========================================================= */
 
 function renderDungeon() {
 
     dungeonElement.innerHTML = "";
 
+
     const dungeon =
         dungeons[currentLevel];
+
+
+    dungeonElement.style.gridTemplateColumns =
+        `repeat(${dungeon[0].length}, 1fr)`;
+
+
+    dungeonElement.style.gridTemplateRows =
+        `repeat(${dungeon.length}, 1fr)`;
+
 
     dungeon.forEach(
         (row, rowIndex) => {
@@ -19,17 +29,25 @@ function renderDungeon() {
                         document.createElement("div");
 
 
-                    // ===============================
-                    // WALL / FLOOR
-                    // ===============================
+                    cellElement.classList.add(
+                        "cell"
+                    );
 
-                    if (cell === "W") {
+
+                    /* =====================================
+                       WALL / FLOOR
+                    ===================================== */
+
+                    if (
+                        cell === "#"
+                    ) {
 
                         cellElement.classList.add(
                             "wall"
                         );
 
-                    } else {
+                    }
+                    else {
 
                         cellElement.classList.add(
                             "floor"
@@ -37,57 +55,83 @@ function renderDungeon() {
                     }
 
 
-                    // ===============================
-                    // TREASURE
-                    // ===============================
+                    /* =====================================
+                       KEY
+                    ===================================== */
 
-                    if (cell === "T") {
-
-                        cellElement.classList.add(
-                            "treasure"
-                        );
-                    }
-
-
-                    // ===============================
-                    // KEY
-                    // ===============================
-
-                    if (cell === "K") {
+                    if (
+                        cell === "K"
+                    ) {
 
                         cellElement.classList.add(
                             "key"
                         );
+
+                        /*
+                            DON'T set textContent here.
+
+                            CSS creates the key emoji.
+                        */
                     }
 
 
-                    // ===============================
-                    // DOOR
-                    // ===============================
+                    /* =====================================
+                       DOOR
+                    ===================================== */
 
-                    if (cell === "D") {
+                    if (
+                        cell === "D"
+                    ) {
 
                         cellElement.classList.add(
                             "door"
                         );
+
+                        /*
+                            CSS creates the door.
+                        */
                     }
 
 
-                    // ===============================
-                    // TRAP
-                    // ===============================
+                    /* =====================================
+                       TREASURE
+                    ===================================== */
 
-                    if (cell === "X") {
+                    if (
+                        cell === "T"
+                    ) {
+
+                        cellElement.classList.add(
+                            "treasure"
+                        );
+
+                        /*
+                            CSS creates the diamond.
+                        */
+                    }
+
+
+                    /* =====================================
+                       TRAP
+                    ===================================== */
+
+                    if (
+                        cell === "X"
+                    ) {
 
                         cellElement.classList.add(
                             "trap"
                         );
+
+                        /*
+                            CSS creates the trap.
+                        */
                     }
 
 
-                    // ===============================
-                    // PLAYER
-                    // ===============================
+                    /* =====================================
+                       PLAYER
+                    ===================================== */
 
                     if (
                         rowIndex === player.row &&
@@ -95,19 +139,21 @@ function renderDungeon() {
                     ) {
 
                         const playerElement =
-                            document.createElement("div");
+                            document.createElement(
+                                "div"
+                            );
+
 
                         playerElement.classList.add(
                             "player"
                         );
 
 
-                        // ===============================
-                        // SPRITE SHEET PLAYER
-                        // ===============================
-
                         const sprite =
-                            document.createElement("div");
+                            document.createElement(
+                                "div"
+                            );
+
 
                         sprite.classList.add(
                             "playerSprite",
@@ -115,10 +161,7 @@ function renderDungeon() {
                         );
 
 
-                        // Only animate while moving
                         if (
-                            typeof isPlayerMoving !==
-                            "undefined" &&
                             isPlayerMoving
                         ) {
 
@@ -131,6 +174,7 @@ function renderDungeon() {
                         playerElement.appendChild(
                             sprite
                         );
+
 
                         cellElement.appendChild(
                             playerElement
@@ -151,38 +195,162 @@ function renderDungeon() {
 }
 
 
-// ===============================
-// UPDATE UI
-// ===============================
+/* =========================================================
+   UPDATE UI
+========================================================= */
 
 function updateUI() {
 
-    timerElement.textContent =
-        formatTime(timer);
+    if (
+        timerElement
+    ) {
 
-    movesElement.textContent =
-        moves;
+        timerElement.textContent =
+            formatTime(timer);
+    }
 
-    levelElement.textContent =
-        `${currentLevel + 1} / ${dungeons.length}`;
+
+    if (
+        movesElement
+    ) {
+
+        movesElement.textContent =
+            moves;
+    }
+
+
+    if (
+        levelElement
+    ) {
+
+        levelElement.textContent =
+            `${currentLevel + 1} / ${dungeons.length}`;
+    }
+
+
+    if (
+        levelNameElement
+    ) {
+
+        levelNameElement.textContent =
+            levels[currentLevel].name;
+    }
+
+
+    if (
+        levelDifficultyElement
+    ) {
+
+        levelDifficultyElement.textContent =
+            levels[currentLevel].difficulty;
+    }
 }
 
 
-// ===============================
-// FORMAT TIME
-// ===============================
+/* =========================================================
+   FORMAT TIME
+========================================================= */
 
 function formatTime(seconds) {
 
     const minutes =
-        Math.floor(seconds / 60);
+        Math.floor(
+            seconds / 60
+        );
+
 
     const remainingSeconds =
         seconds % 60;
+
 
     return (
         String(minutes).padStart(2, "0") +
         ":" +
         String(remainingSeconds).padStart(2, "0")
     );
+}
+
+
+/* =========================================================
+   LEVEL SELECT
+========================================================= */
+
+function renderLevelSelect() {
+
+    if (!levelList) {
+        return;
+    }
+
+
+    levelList.innerHTML = "";
+
+
+    levels.forEach(
+        (level, index) => {
+
+            const card =
+                document.createElement(
+                    "button"
+                );
+
+
+            card.classList.add(
+                "levelCard"
+            );
+
+
+            const unlocked =
+                index <=
+                highestUnlockedLevel;
+
+
+            if (!unlocked) {
+
+                card.classList.add(
+                    "locked"
+                );
+            }
+
+
+            card.innerHTML = `
+                <span class="levelNumber">
+                    ${index + 1}
+                </span>
+
+                <span class="levelInfo">
+                    <strong>
+                        ${level.name}
+                    </strong>
+
+                    <small>
+                        ${level.difficulty}
+                    </small>
+                </span>
+
+                <span class="levelStatus">
+                    ${unlocked ? "PLAY" : "LOCKED"}
+                </span>
+            `;
+
+
+            if (
+                unlocked
+            ) {
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        selectLevel(index);
+
+                    }
+                );
+            }
+
+
+            levelList.appendChild(
+                card
+            );
+        }
+    );r
 }
