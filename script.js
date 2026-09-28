@@ -369,12 +369,17 @@ function resetLevel() {
     */
 
     dungeons[currentLevel] =
-        generateDungeon(
-            currentLevel
-        );
+    generateDungeon(
+        currentLevel
+    );
 
 
-    renderDungeon();
+initializeEnemy(
+    currentLevel
+);
+
+
+renderDungeon();
 
 
     timerInterval =

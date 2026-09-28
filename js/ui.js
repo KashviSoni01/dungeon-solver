@@ -66,12 +66,6 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "key"
                         );
-
-                        /*
-                            DON'T set textContent here.
-
-                            CSS creates the key emoji.
-                        */
                     }
 
 
@@ -86,10 +80,6 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "door"
                         );
-
-                        /*
-                            CSS creates the door.
-                        */
                     }
 
 
@@ -104,10 +94,6 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "treasure"
                         );
-
-                        /*
-                            CSS creates the diamond.
-                        */
                     }
 
 
@@ -122,10 +108,37 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "trap"
                         );
+                    }
 
-                        /*
-                            CSS creates the trap.
-                        */
+
+                    /* =====================================
+                       ENEMY
+                    ===================================== */
+
+                    if (
+                        typeof getEnemyAt === "function" &&
+                        getEnemyAt(
+                            rowIndex,
+                            colIndex
+                        )
+                    ) {
+
+                        const enemyElement =
+                            document.createElement("div");
+
+
+                        enemyElement.classList.add(
+                            "enemy"
+                        );
+
+
+                        enemyElement.textContent =
+                            "👹";
+
+
+                        cellElement.appendChild(
+                            enemyElement
+                        );
                     }
 
 
@@ -352,5 +365,5 @@ function renderLevelSelect() {
                 card
             );
         }
-    );r
+    );
 }
