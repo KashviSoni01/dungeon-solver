@@ -1,6 +1,4 @@
-/* =========================================================
-   RENDER DUNGEON
-========================================================= */
+
 
 function renderDungeon() {
 
@@ -19,6 +17,14 @@ function renderDungeon() {
         `repeat(${dungeon.length}, 1fr)`;
 
 
+    
+    if (typeof hasKey !== "undefined" && hasKey) {
+        dungeonElement.classList.add("keyPicked");
+    } else {
+        dungeonElement.classList.remove("keyPicked");
+    }
+
+
     dungeon.forEach(
         (row, rowIndex) => {
 
@@ -34,9 +40,7 @@ function renderDungeon() {
                     );
 
 
-                    /* =====================================
-                       WALL / FLOOR
-                    ===================================== */
+                    
 
                     if (
                         cell === "#"
@@ -55,9 +59,7 @@ function renderDungeon() {
                     }
 
 
-                    /* =====================================
-                       KEY
-                    ===================================== */
+                    
 
                     if (
                         cell === "K"
@@ -66,12 +68,21 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "key"
                         );
+
+                        const sprite =
+                            document.createElement("div");
+
+                        sprite.classList.add(
+                            "keySprite"
+                        );
+
+                        cellElement.appendChild(
+                            sprite
+                        );
                     }
 
 
-                    /* =====================================
-                       DOOR
-                    ===================================== */
+                    
 
                     if (
                         cell === "D"
@@ -80,12 +91,21 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "door"
                         );
+
+                        const sprite =
+                            document.createElement("div");
+
+                        sprite.classList.add(
+                            "doorSprite"
+                        );
+
+                        cellElement.appendChild(
+                            sprite
+                        );
                     }
 
 
-                    /* =====================================
-                       TREASURE
-                    ===================================== */
+                    
 
                     if (
                         cell === "T"
@@ -94,12 +114,21 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "treasure"
                         );
+
+                        const sprite =
+                            document.createElement("div");
+
+                        sprite.classList.add(
+                            "treasureSprite"
+                        );
+
+                        cellElement.appendChild(
+                            sprite
+                        );
                     }
 
 
-                    /* =====================================
-                       TRAP
-                    ===================================== */
+                    
 
                     if (
                         cell === "X"
@@ -108,12 +137,21 @@ function renderDungeon() {
                         cellElement.classList.add(
                             "trap"
                         );
+
+                        const sprite =
+                            document.createElement("div");
+
+                        sprite.classList.add(
+                            "trapSprite"
+                        );
+
+                        cellElement.appendChild(
+                            sprite
+                        );
                     }
 
 
-                    /* =====================================
-                       ENEMY
-                    ===================================== */
+                    
 
                     if (
                         typeof getEnemyAt === "function" &&
@@ -132,8 +170,16 @@ function renderDungeon() {
                         );
 
 
-                        enemyElement.textContent =
-                            "👹";
+                        const sprite =
+                            document.createElement("div");
+
+                        sprite.classList.add(
+                            "enemySprite"
+                        );
+
+                        enemyElement.appendChild(
+                            sprite
+                        );
 
 
                         cellElement.appendChild(
@@ -142,9 +188,7 @@ function renderDungeon() {
                     }
 
 
-                    /* =====================================
-                       PLAYER
-                    ===================================== */
+                    
 
                     if (
                         rowIndex === player.row &&
@@ -208,9 +252,7 @@ function renderDungeon() {
 }
 
 
-/* =========================================================
-   UPDATE UI
-========================================================= */
+
 
 function updateUI() {
 
@@ -260,9 +302,7 @@ function updateUI() {
 }
 
 
-/* =========================================================
-   FORMAT TIME
-========================================================= */
+
 
 function formatTime(seconds) {
 
@@ -284,9 +324,7 @@ function formatTime(seconds) {
 }
 
 
-/* =========================================================
-   LEVEL SELECT
-========================================================= */
+
 
 function renderLevelSelect() {
 
@@ -308,7 +346,7 @@ function renderLevelSelect() {
 
 
             card.classList.add(
-                "levelCard"
+                "level-card"
             );
 
 
@@ -317,8 +355,12 @@ function renderLevelSelect() {
                 highestUnlockedLevel;
 
 
-            if (!unlocked) {
-
+            if (unlocked) {
+                card.classList.add(
+                    "unlocked"
+                );
+            }
+            else {
                 card.classList.add(
                     "locked"
                 );
@@ -326,21 +368,27 @@ function renderLevelSelect() {
 
 
             card.innerHTML = `
-                <span class="levelNumber">
-                    ${index + 1}
+                <span class="level-number">
+                    LEVEL ${index + 1}
                 </span>
 
-                <span class="levelInfo">
-                    <strong>
+                <span class="level-symbol" aria-hidden="true"></span>
+
+                <div>
+                    <h3>
                         ${level.name}
-                    </strong>
+                    </h3>
 
                     <small>
-                        ${level.difficulty}
+                        Explore the dungeon
                     </small>
-                </span>
 
-                <span class="levelStatus">
+                    <span class="difficulty">
+                        ${level.difficulty}
+                    </span>
+                </div>
+
+                <span class="level-status">
                     ${unlocked ? "PLAY" : "LOCKED"}
                 </span>
             `;

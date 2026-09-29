@@ -12,6 +12,13 @@
 
     <title>Dungeon Solver</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
+        rel="stylesheet"
+    >
+
     <link
         rel="stylesheet"
         href="style.css"
@@ -37,13 +44,13 @@
             <div class="title-area">
 
                 <div class="title-icon">
-                    ◆
+                    <img src="assets/hud/emblem.svg" alt="Dungeon Solver emblem" width="48" height="48">
                 </div>
 
                 <div>
 
                     <h1>
-                        Dungeon Solver
+                        DUNGEON SOLVER
                     </h1>
 
                     <p class="subtitle">
@@ -154,7 +161,7 @@
             </button>
 
 
-            <button id="levelSelectButton">
+            <button id="levelsButton">
 
                 <span>
                     LEVELS
@@ -231,7 +238,7 @@
 
 
             <button
-                id="closeLevelSelect"
+                id="closeLevels"
                 class="secondary-button"
             >
                 RETURN TO DUNGEON
@@ -268,6 +275,14 @@
 
             <button id="resume">
                 RESUME
+            </button>
+
+
+            <button
+                id="pauseRestart"
+                class="secondary-button"
+            >
+                RESTART
             </button>
 
 

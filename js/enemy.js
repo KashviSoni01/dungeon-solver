@@ -1,6 +1,6 @@
-// =========================================================
-// ENEMY SYSTEM
-// =========================================================
+
+
+
 
 let enemy = null;
 
@@ -9,9 +9,9 @@ const enemySettings = {
 };
 
 
-// =========================================================
-// INITIALIZE ENEMY
-// =========================================================
+
+
+
 
 function initializeEnemy(level) {
 
@@ -19,7 +19,7 @@ function initializeEnemy(level) {
 
     enemy = null;
 
-    // Enemy only appears in Level 2
+    
     if (level !== 1) {
         return;
     }
@@ -28,9 +28,9 @@ function initializeEnemy(level) {
 }
 
 
-// =========================================================
-// CREATE TREASURE GUARD
-// =========================================================
+
+
+
 
 function createTreasureGuard() {
 
@@ -89,9 +89,9 @@ function createTreasureGuard() {
 }
 
 
-// =========================================================
-// FIND SAFE SOLUTION PATH
-// =========================================================
+
+
+
 
 function findSafeSolutionPath(dungeon) {
 
@@ -358,9 +358,9 @@ function findSafeSolutionPath(dungeon) {
 }
 
 
-// =========================================================
-// STATE KEY
-// =========================================================
+
+
+
 
 function stateKey(
     row,
@@ -375,18 +375,16 @@ function stateKey(
 }
 
 
-// =========================================================
-// BUILD GUARD PATROL
-// =========================================================
+
+
+
 
 function buildGuardPatrol(
     dungeon,
     solutionPath
 ) {
 
-    /*
-        Find the diamond.
-    */
+    
 
     const treasureIndex =
         solutionPath.findIndex(
@@ -406,27 +404,13 @@ function buildGuardPatrol(
     }
 
 
-    /*
-        We want the enemy to patrol
-        around the final section of
-        the dungeon.
-
-        The solution path near the
-        treasure is included so the
-        enemy can temporarily block
-        the player's route.
-    */
+    
 
 
     const patrolCells = new Map();
 
 
-    /*
-        Add cells from the solution
-        path near the treasure.
-
-        This includes the diamond.
-    */
+    
 
     const startIndex =
         Math.max(
@@ -459,13 +443,7 @@ function buildGuardPatrol(
     }
 
 
-    /*
-        Now look for nearby floor
-        cells around the treasure area.
-
-        These allow the enemy to leave
-        the main path temporarily.
-    */
+    
 
     const treasure =
         solutionPath[
@@ -488,9 +466,7 @@ function buildGuardPatrol(
             col++
         ) {
 
-            /*
-                Only normal floor cells.
-            */
+            
 
             if (
                 dungeon[row][col] !== "."
@@ -532,17 +508,13 @@ function buildGuardPatrol(
     }
 
 
-    /*
-        Convert to array.
-    */
+    
 
     const candidates =
         [...patrolCells.values()];
 
 
-    /*
-        Find a connected patrol route.
-    */
+    
 
     const patrolPath =
         findConnectedPatrol(
@@ -557,9 +529,9 @@ function buildGuardPatrol(
 }
 
 
-// =========================================================
-// FIND CONNECTED PATROL
-// =========================================================
+
+
+
 
 function findConnectedPatrol(
     dungeon,
@@ -584,10 +556,7 @@ function findConnectedPatrol(
         );
 
 
-    /*
-        Start the patrol close to
-        the treasure.
-    */
+    
 
     const orderedCandidates =
         [...candidates].sort(
@@ -654,11 +623,7 @@ function findConnectedPatrol(
             }
 
 
-            /*
-                A patrol of 6-8 cells is
-                enough to make the guard
-                move around the area.
-            */
+            
 
             if (
                 path.length >= 8
@@ -775,10 +740,7 @@ function findConnectedPatrol(
     }
 
 
-    /*
-        We want at least two cells
-        so the enemy actually moves.
-    */
+    
 
     if (
         bestPath.length < 2
@@ -791,9 +753,9 @@ function findConnectedPatrol(
 }
 
 
-// =========================================================
-// SHUFFLE
-// =========================================================
+
+
+
 
 function shuffleEnemyCandidates(
     candidates
@@ -831,9 +793,9 @@ function shuffleEnemyCandidates(
 }
 
 
-// =========================================================
-// START ENEMY PATROL
-// =========================================================
+
+
+
 
 function startEnemyPatrol() {
 
@@ -874,9 +836,9 @@ function startEnemyPatrol() {
 }
 
 
-// =========================================================
-// MOVE ENEMY
-// =========================================================
+
+
+
 
 function movePatrolEnemy() {
 
@@ -889,9 +851,7 @@ function movePatrolEnemy() {
     }
 
 
-    /*
-        Check collision before moving.
-    */
+    
 
     if (
         checkEnemyCollision()
@@ -904,10 +864,7 @@ function movePatrolEnemy() {
         enemy.direction;
 
 
-    /*
-        Reached one end.
-        Turn around.
-    */
+    
 
     if (
         enemy.pathIndex >=
@@ -922,10 +879,7 @@ function movePatrolEnemy() {
     }
 
 
-    /*
-        Reached the other end.
-        Turn around.
-    */
+    
 
     if (
         enemy.pathIndex < 0
@@ -957,24 +911,20 @@ function movePatrolEnemy() {
         next.col;
 
 
-    /*
-        Check collision after moving.
-    */
+    
 
     checkEnemyCollision();
 
 
-    /*
-        Redraw enemy.
-    */
+    
 
     renderDungeon();
 }
 
 
-// =========================================================
-// ENEMY COLLISION
-// =========================================================
+
+
+
 
 function checkEnemyCollision() {
 
@@ -1027,9 +977,9 @@ function checkEnemyCollision() {
 }
 
 
-// =========================================================
-// STOP ENEMY
-// =========================================================
+
+
+
 
 function stopEnemy() {
 
@@ -1049,9 +999,9 @@ function stopEnemy() {
 }
 
 
-// =========================================================
-// CHECK ENEMY POSITION
-// =========================================================
+
+
+
 
 function getEnemyAt(
     row,

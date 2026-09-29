@@ -1,12 +1,7 @@
-/* =========================================================
-   DUNGEON GENERATION
-   Real Maze + Key + Door + Treasure + Safe Traps + BFS
-========================================================= */
 
 
-/* =========================================================
-   DIRECTIONS
-========================================================= */
+
+
 
 const MAZE_DIRECTIONS = [
     { row: -1, col: 0 },
@@ -16,9 +11,7 @@ const MAZE_DIRECTIONS = [
 ];
 
 
-/* =========================================================
-   SHUFFLE
-========================================================= */
+
 
 function shuffle(array) {
 
@@ -37,9 +30,7 @@ function shuffle(array) {
 }
 
 
-/* =========================================================
-   FIND PATH USING BFS
-========================================================= */
+
 
 function findPath(dungeon, start, target) {
 
@@ -51,7 +42,6 @@ function findPath(dungeon, start, target) {
     ];
 
     const visited = new Set();
-
     const previous = new Map();
 
     const startKey =
@@ -67,10 +57,6 @@ function findPath(dungeon, start, target) {
         const currentKey =
             `${current.row},${current.col}`;
 
-
-        /*
-            Target found.
-        */
 
         if (
             current.row === target.row &&
@@ -122,10 +108,6 @@ function findPath(dungeon, start, target) {
                 direction.col;
 
 
-            /*
-                Outside dungeon.
-            */
-
             if (
                 nextRow < 0 ||
                 nextRow >= dungeon.length ||
@@ -135,10 +117,6 @@ function findPath(dungeon, start, target) {
                 continue;
             }
 
-
-            /*
-                Wall.
-            */
 
             if (
                 dungeon[nextRow][nextCol] === "#"
@@ -179,22 +157,36 @@ function findPath(dungeon, start, target) {
 }
 
 
-/* =========================================================
-   GENERATE PERFECT MAZE
-========================================================= */
-
-function generateMaze() {
-
-    const rows = 10;
-    const cols = 10;
 
 
-    /*
-        Start with every cell as a wall.
+function generateMaze(level = 0) {
 
-        # = wall
-        . = floor
-    */
+    let rows;
+    let cols;
+
+
+    
+
+    if (level === 0) {
+
+        rows = 15;
+        cols = 15;
+
+    }
+    else if (level === 1) {
+
+        rows = 17;
+        cols = 17;
+
+    }
+    else {
+
+        rows = 21;
+        cols = 21;
+    }
+
+
+    
 
     const dungeon =
         Array.from(
@@ -204,23 +196,11 @@ function generateMaze() {
         );
 
 
-    /*
-        Maze cells exist at odd coordinates:
-
-        (1,1)
-        (1,3)
-        (1,5)
-        (1,7)
-
-        (3,1)
-        (3,3)
-        etc.
-    */
-
     const visited = new Set();
 
 
     function getKey(row, col) {
+
         return `${row},${col}`;
     }
 
@@ -232,19 +212,10 @@ function generateMaze() {
         );
 
 
-        /*
-            Current maze cell becomes floor.
-        */
-
         dungeon[row][col] = ".";
 
 
-        /*
-            Randomize directions.
-
-            This makes every generated dungeon
-            different.
-        */
+        
 
         const directions =
             shuffle([
@@ -261,24 +232,21 @@ function generateMaze() {
         ) {
 
             const nextRow =
-                row + direction.row;
+                row +
+                direction.row;
 
             const nextCol =
-                col + direction.col;
+                col +
+                direction.col;
 
 
-            /*
-                Keep inside the maze.
-
-                Valid maze cells:
-                1, 3, 5, 7
-            */
+            
 
             if (
                 nextRow < 1 ||
-                nextRow > 7 ||
+                nextRow >= rows - 1 ||
                 nextCol < 1 ||
-                nextCol > 7
+                nextCol >= cols - 1
             ) {
                 continue;
             }
@@ -298,10 +266,7 @@ function generateMaze() {
             }
 
 
-            /*
-                Remove the wall between
-                current cell and next cell.
-            */
+            
 
             const wallRow =
                 row +
@@ -319,10 +284,6 @@ function generateMaze() {
             ] = ".";
 
 
-            /*
-                Continue carving.
-            */
-
             carve(
                 nextRow,
                 nextCol
@@ -331,20 +292,122 @@ function generateMaze() {
     }
 
 
-    /*
-        Start at player position.
-    */
+    
 
     carve(1, 1);
+
+
+    
+
+    const loopChance =
+        level === 0
+            ? 0.08
+            : level === 1
+                ? 0.10
+                : 0.12;
+
+
+    const possibleOpenings = [];
+
+
+    
+
+    for (
+        let row = 1;
+        row < rows - 1;
+        row++
+    ) {
+
+        for (
+            let col = 2;
+            col < cols - 1;
+            col += 2
+        ) {
+
+            if (
+                dungeon[row][col] === "#" &&
+                dungeon[row][col - 1] === "." &&
+                dungeon[row][col + 1] === "."
+            ) {
+
+                possibleOpenings.push({
+                    row,
+                    col
+                });
+            }
+        }
+    }
+
+
+    
+
+    for (
+        let row = 2;
+        row < rows - 1;
+        row += 2
+    ) {
+
+        for (
+            let col = 1;
+            col < cols - 1;
+            col++
+        ) {
+
+            if (
+                dungeon[row][col] === "#" &&
+                dungeon[row - 1][col] === "." &&
+                dungeon[row + 1][col] === "."
+            ) {
+
+                possibleOpenings.push({
+                    row,
+                    col
+                });
+            }
+        }
+    }
+
+
+    
+
+    const shuffledOpenings =
+        shuffle(possibleOpenings);
+
+
+    const openingCount =
+        Math.max(
+            2,
+            Math.floor(
+                shuffledOpenings.length *
+                loopChance
+            )
+        );
+
+
+    for (
+        let i = 0;
+        i < openingCount &&
+        i < shuffledOpenings.length;
+        i++
+    ) {
+
+        const opening =
+            shuffledOpenings[i];
+
+
+        dungeon[
+            opening.row
+        ][
+            opening.col
+        ] = ".";
+    }
 
 
     return dungeon;
 }
 
 
-/* =========================================================
-   FIND ALL REACHABLE CELLS
-========================================================= */
+
 
 function getReachableCells(
     dungeon,
@@ -359,16 +422,12 @@ function getReachableCells(
         }
     ];
 
-
     const visited = new Set();
-
 
     const startKey =
         `${start.row},${start.col}`;
 
-
     visited.add(startKey);
-
 
     const cells = [];
 
@@ -441,20 +500,9 @@ function getReachableCells(
 }
 
 
-/* =========================================================
-   BFS SOLVABILITY CHECK
-========================================================= */
+
 
 function isDungeonSolvable(dungeon) {
-
-    /*
-        State:
-
-        row
-        col
-        hasKey
-        passedDoor
-    */
 
     const queue = [
         {
@@ -505,9 +553,7 @@ function isDungeonSolvable(dungeon) {
             ];
 
 
-        /*
-            Pick up key.
-        */
+        
 
         if (
             currentCell === "K"
@@ -517,12 +563,7 @@ function isDungeonSolvable(dungeon) {
         }
 
 
-        /*
-            Door.
-
-            The player cannot enter
-            the door without the key.
-        */
+        
 
         if (
             currentCell === "D"
@@ -537,12 +578,7 @@ function isDungeonSolvable(dungeon) {
         }
 
 
-        /*
-            Treasure is only valid
-            after:
-
-            KEY + DOOR
-        */
+        
 
         if (
             currentCell === "T" &&
@@ -568,10 +604,6 @@ function isDungeonSolvable(dungeon) {
                 direction.col;
 
 
-            /*
-                Outside dungeon.
-            */
-
             if (
                 nextRow < 0 ||
                 nextRow >= dungeon.length ||
@@ -590,10 +622,6 @@ function isDungeonSolvable(dungeon) {
                 ];
 
 
-            /*
-                Wall.
-            */
-
             if (
                 nextCell === "#"
             ) {
@@ -601,17 +629,7 @@ function isDungeonSolvable(dungeon) {
             }
 
 
-            /*
-                IMPORTANT:
-
-                Traps are walkable during the
-                actual game, but BFS treats them
-                as blocked.
-
-                Therefore BFS asks:
-
-                "Is there a SAFE route?"
-            */
+            
 
             if (
                 nextCell === "X"
@@ -620,9 +638,7 @@ function isDungeonSolvable(dungeon) {
             }
 
 
-            /*
-                Locked door.
-            */
+            
 
             if (
                 nextCell === "D" &&
@@ -646,31 +662,12 @@ function isDungeonSolvable(dungeon) {
 }
 
 
-/* =========================================================
-   PLACE OBJECTIVES ON A SINGLE SAFE PATH
-========================================================= */
+
 
 function placeObjectives(
     dungeon,
     path
 ) {
-
-    /*
-        We need a reasonably long path.
-
-        Example:
-
-        START
-          ↓
-          ↓
-        KEY
-          ↓
-          ↓
-        DOOR
-          ↓
-          ↓
-        TREASURE
-    */
 
     if (
         path.length < 12
@@ -679,9 +676,7 @@ function placeObjectives(
     }
 
 
-    /*
-        Key around 30% of the route.
-    */
+    
 
     const keyIndex =
         Math.floor(
@@ -689,9 +684,7 @@ function placeObjectives(
         );
 
 
-    /*
-        Door around 60%.
-    */
+    
 
     const doorIndex =
         Math.floor(
@@ -699,20 +692,13 @@ function placeObjectives(
         );
 
 
-    /*
-        Treasure near the end.
-    */
+    
 
     const treasureIndex =
         Math.floor(
             path.length * 0.90
         );
 
-
-    /*
-        Make sure indices are properly
-        separated.
-    */
 
     if (
         keyIndex <= 0 ||
@@ -732,10 +718,6 @@ function placeObjectives(
     const treasure =
         path[treasureIndex];
 
-
-    /*
-        Place the objects.
-    */
 
     dungeon[
         key.row
@@ -766,20 +748,13 @@ function placeObjectives(
 }
 
 
-/* =========================================================
-   PLACE TRAPS
-========================================================= */
+
 
 function placeTraps(
     dungeon,
     safePath,
     trapCount
 ) {
-
-    /*
-        Convert safe path into a Set
-        for quick lookup.
-    */
 
     const safePathSet =
         new Set(
@@ -805,10 +780,6 @@ function placeTraps(
             col++
         ) {
 
-            /*
-                Only normal floor cells.
-            */
-
             if (
                 dungeon[row][col] !== "."
             ) {
@@ -816,10 +787,7 @@ function placeTraps(
             }
 
 
-            /*
-                NEVER put a trap
-                on the guaranteed route.
-            */
+            
 
             if (
                 safePathSet.has(
@@ -830,10 +798,7 @@ function placeTraps(
             }
 
 
-            /*
-                Never put a trap
-                on the starting cell.
-            */
+            
 
             if (
                 row === 1 &&
@@ -855,10 +820,6 @@ function placeTraps(
         shuffle(candidates);
 
 
-    /*
-        Add requested number of traps.
-    */
-
     for (
         let i = 0;
         i < trapCount &&
@@ -879,18 +840,13 @@ function placeTraps(
 }
 
 
-/* =========================================================
-   MAIN DUNGEON GENERATOR
-========================================================= */
+
 
 function generateDungeon(
     level = 0
 ) {
 
-    /*
-        Different trap counts
-        for different levels.
-    */
+    
 
     let trapCount;
 
@@ -899,22 +855,19 @@ function generateDungeon(
 
         trapCount = 2;
 
-    } else if (level === 1) {
+    }
+    else if (level === 1) {
 
         trapCount = 4;
 
-    } else {
+    }
+    else {
 
         trapCount = 6;
     }
 
 
-    /*
-        Try multiple random mazes.
-
-        If one doesn't have a long enough
-        route, generate another.
-    */
+    
 
     for (
         let attempt = 0;
@@ -922,13 +875,8 @@ function generateDungeon(
         attempt++
     ) {
 
-        /*
-            Generate a brand-new
-            perfect maze.
-        */
-
         const dungeon =
-            generateMaze();
+            generateMaze(level);
 
 
         const start = {
@@ -937,9 +885,7 @@ function generateDungeon(
         };
 
 
-        /*
-            Find all reachable cells.
-        */
+        
 
         const reachable =
             getReachableCells(
@@ -948,13 +894,7 @@ function generateDungeon(
             );
 
 
-        /*
-            Find the farthest cell.
-
-            Because this is a perfect maze,
-            the path from start to this cell
-            is unique.
-        */
+        
 
         reachable.sort(
             (a, b) =>
@@ -975,10 +915,7 @@ function generateDungeon(
         }
 
 
-        /*
-            Find the actual path from
-            player to farthest cell.
-        */
+        
 
         const safePath =
             findPath(
@@ -995,15 +932,7 @@ function generateDungeon(
         }
 
 
-        /*
-            Put:
-
-            KEY
-            DOOR
-            TREASURE
-
-            directly on this path.
-        */
+        
 
         const objectives =
             placeObjectives(
@@ -1019,10 +948,7 @@ function generateDungeon(
         }
 
 
-        /*
-            Put traps ONLY away
-            from the safe path.
-        */
+        
 
         placeTraps(
             dungeon,
@@ -1031,14 +957,7 @@ function generateDungeon(
         );
 
 
-        /*
-            Final BFS verification.
-
-            This must return TRUE.
-
-            If not, destroy this dungeon
-            and generate another one.
-        */
+        
 
         if (
             isDungeonSolvable(
@@ -1051,93 +970,107 @@ function generateDungeon(
     }
 
 
-    /*
-        This should almost never be reached,
-        but provides a guaranteed valid
-        dungeon if something goes wrong.
-    */
+    
 
-    return createFallbackDungeon();
+    return createFallbackDungeon(level);
 }
 
 
-/* =========================================================
-   GUARANTEED FALLBACK DUNGEON
-========================================================= */
-
-function createFallbackDungeon() {
-
-    /*
-        # = wall
-        . = floor
-
-        The route is:
-
-        PLAYER
-           ↓
-           ↓
-         KEY
-           ↓
-           ↓
-         DOOR
-           ↓
-           ↓
-       TREASURE
-    */
-
-    const dungeon = [
-
-        [
-            "#","#","#","#","#","#","#","#","#","#"
-        ],
-
-        [
-            "#",".","#","#","#","#","#","#","#","#"
-        ],
-
-        [
-            "#",".","#",".",".",".",".",".","#","#"
-        ],
-
-        [
-            "#",".","#",".","#","#","#",".","#","#"
-        ],
-
-        [
-            "#",".",".","K","#","D","#",".","#","#"
-        ],
-
-        [
-            "#","#","#",".","#",".","#",".","#","#"
-        ],
-
-        [
-            "#","#","#",".","#",".","#",".","#","#"
-        ],
-
-        [
-            "#","#","#",".","#",".","#",".","#","#"
-        ],
-
-        [
-            "#","#","#",".","#",".","#",".","T","#"
-        ],
-
-        [
-            "#","#","#","#","#","#","#","#","#","#"
-        ]
-
-    ];
 
 
-    /*
-        Add traps away from the
-        guaranteed route.
-    */
+function createFallbackDungeon(
+    level = 0
+) {
 
-    dungeon[2][4] = "X";
+    let size;
 
-    dungeon[7][5] = "X";
+
+    if (level === 0) {
+
+        size = 15;
+
+    }
+    else if (level === 1) {
+
+        size = 17;
+
+    }
+    else {
+
+        size = 21;
+    }
+
+
+    const dungeon =
+        Array.from(
+            { length: size },
+            () =>
+                Array(size).fill("#")
+        );
+
+
+    
+
+    for (
+        let row = 1;
+        row < size - 1;
+        row++
+    ) {
+
+        dungeon[row][1] = ".";
+    }
+
+
+    for (
+        let col = 1;
+        col < size - 1;
+        col++
+    ) {
+
+        dungeon[size - 2][col] = ".";
+    }
+
+
+    
+
+    for (
+        let row = 3;
+        row < size - 3;
+        row += 4
+    ) {
+
+        for (
+            let col = 1;
+            col < size - 3;
+            col += 2
+        ) {
+
+            dungeon[row][col] = ".";
+        }
+    }
+
+
+    
+
+    const keyRow =
+        Math.floor(size * 0.30);
+
+    const doorRow =
+        Math.floor(size * 0.55);
+
+
+    dungeon[keyRow][1] = "K";
+
+    dungeon[doorRow][1] = "D";
+
+    dungeon[size - 2][size - 2] = "T";
+
+
+    
+
+    dungeon[2][3] = "X";
+
+    dungeon[4][5] = "X";
 
 
     return dungeon;
