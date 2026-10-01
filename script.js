@@ -1,4 +1,6 @@
-
+/* =========================================================
+   GAME STATE
+========================================================= */
 
 let currentLevel = 0;
 
@@ -12,7 +14,9 @@ let gamePaused = false;
 let highestUnlockedLevel = 0;
 
 
-
+/* =========================================================
+   LEVELS
+========================================================= */
 
 const levels = [
 
@@ -37,7 +41,9 @@ const levels = [
 ];
 
 
-
+/* =========================================================
+   DOM ELEMENTS
+========================================================= */
 
 const dungeonElement =
     document.getElementById("dungeon");
@@ -65,7 +71,13 @@ const pauseButton =
     document.getElementById("pause");
 
 const levelsButton =
-    document.getElementById("levelsButton");
+    document.getElementById("levelSelectButton");
+
+const pauseLevelSelectButton =
+    document.getElementById("pauseLevelSelect");
+
+const winLevelSelectButton =
+    document.getElementById("winLevelSelect");
 
 
 const pauseScreen =
@@ -73,15 +85,6 @@ const pauseScreen =
 
 const resumeButton =
     document.getElementById("resume");
-
-const pauseRestartButton =
-    document.getElementById("pauseRestart");
-
-const pauseLevelSelectButton =
-    document.getElementById("pauseLevelSelect");
-
-const winLevelSelectButton =
-    document.getElementById("winLevelSelect");
 
 
 const winScreen =
@@ -110,13 +113,15 @@ const levelList =
         "levelList"
     );
 
-const closeLevels =
+const closeLevelSelectBtn =
     document.getElementById(
-        "closeLevels"
+        "closeLevelSelect"
     );
 
 
-
+/* =========================================================
+   CREATE DUNGEONS
+========================================================= */
 
 const dungeons =
     levels.map(
@@ -125,7 +130,9 @@ const dungeons =
     );
 
 
-
+/* =========================================================
+   CHECK WIN
+========================================================= */
 
 function checkWin() {
 
@@ -177,13 +184,17 @@ function checkWin() {
 }
 
 
-
+/* =========================================================
+   KEYBOARD CONTROLS
+========================================================= */
 
 document.addEventListener(
     "keydown",
     event => {
 
-        
+        /* =====================================
+           ARROW KEYS / WASD
+        ===================================== */
 
         switch (event.key) {
 
@@ -248,7 +259,9 @@ document.addEventListener(
         }
 
 
-        
+        /* =====================================
+           ESC = PAUSE
+        ===================================== */
 
         if (
             event.key === "Escape"
@@ -260,7 +273,9 @@ document.addEventListener(
         }
 
 
-        
+        /* =====================================
+           R = RESET
+        ===================================== */
 
         if (
             event.key === "r" ||
@@ -273,7 +288,9 @@ document.addEventListener(
         }
 
 
-        
+        /* =====================================
+           L = LEVEL SELECT
+        ===================================== */
 
         if (
             event.key === "l" ||
@@ -288,7 +305,9 @@ document.addEventListener(
 );
 
 
-
+/* =========================================================
+   TIMER
+========================================================= */
 
 let timerInterval =
     setInterval(
@@ -311,7 +330,9 @@ let timerInterval =
     );
 
 
-
+/* =========================================================
+   RESET LEVEL
+========================================================= */
 
 function resetLevel() {
 
@@ -346,7 +367,9 @@ function resetLevel() {
     }
 
 
-    
+    /*
+        Generate a fresh dungeon.
+    */
 
     dungeons[currentLevel] =
     generateDungeon(
@@ -384,7 +407,9 @@ renderDungeon();
 }
 
 
-
+/* =========================================================
+   PAUSE
+========================================================= */
 
 function togglePause() {
 
@@ -411,7 +436,9 @@ function togglePause() {
 }
 
 
-
+/* =========================================================
+   OPEN LEVEL SELECT
+========================================================= */
 
 function openLevelSelect() {
 
@@ -422,7 +449,9 @@ function openLevelSelect() {
 }
 
 
-
+/* =========================================================
+   CLOSE LEVEL SELECT
+========================================================= */
 
 function closeLevelSelect() {
 
@@ -431,7 +460,9 @@ function closeLevelSelect() {
 }
 
 
-
+/* =========================================================
+   SELECT LEVEL
+========================================================= */
 
 function selectLevel(index) {
 
@@ -450,7 +481,9 @@ function selectLevel(index) {
 }
 
 
-
+/* =========================================================
+   RESTART BUTTON
+========================================================= */
 
 if (restartButton) {
 
@@ -465,7 +498,9 @@ if (restartButton) {
 }
 
 
-
+/* =========================================================
+   PAUSE BUTTON
+========================================================= */
 
 if (pauseButton) {
 
@@ -480,7 +515,9 @@ if (pauseButton) {
 }
 
 
-
+/* =========================================================
+   RESUME BUTTON
+========================================================= */
 
 if (resumeButton) {
 
@@ -498,22 +535,9 @@ if (resumeButton) {
 }
 
 
-
-
-if (pauseRestartButton) {
-
-    pauseRestartButton.addEventListener(
-        "click",
-        () => {
-
-            resetLevel();
-
-        }
-    );
-}
-
-
-
+/* =========================================================
+   LEVELS BUTTON (from main HUD)
+========================================================= */
 
 if (levelsButton) {
 
@@ -528,11 +552,13 @@ if (levelsButton) {
 }
 
 
+/* =========================================================
+   CLOSE LEVEL SELECT
+========================================================= */
 
+if (closeLevelSelectBtn) {
 
-if (closeLevels) {
-
-    closeLevels.addEventListener(
+    closeLevelSelectBtn.addEventListener(
         "click",
         () => {
 
@@ -543,7 +569,51 @@ if (closeLevels) {
 }
 
 
+/* =========================================================
+   PAUSE SCREEN -> LEVEL SELECT
+========================================================= */
 
+if (pauseLevelSelectButton) {
+
+    pauseLevelSelectButton.addEventListener(
+        "click",
+        () => {
+
+            gamePaused = false;
+
+            pauseScreen.style.display =
+                "none";
+
+            openLevelSelect();
+
+        }
+    );
+}
+
+
+/* =========================================================
+   WIN SCREEN -> LEVEL SELECT
+========================================================= */
+
+if (winLevelSelectButton) {
+
+    winLevelSelectButton.addEventListener(
+        "click",
+        () => {
+
+            winScreen.style.display =
+                "none";
+
+            openLevelSelect();
+
+        }
+    );
+}
+
+
+/* =========================================================
+   NEXT LEVEL
+========================================================= */
 
 if (nextLevelButton) {
 
@@ -584,7 +654,9 @@ if (nextLevelButton) {
 }
 
 
-
+/* =========================================================
+   PLAY AGAIN
+========================================================= */
 
 if (playAgainButton) {
 
@@ -601,42 +673,8 @@ if (playAgainButton) {
 }
 
 
-
-
-if (pauseLevelSelectButton) {
-
-    pauseLevelSelectButton.addEventListener(
-        "click",
-        () => {
-
-            pauseScreen.style.display = "none";
-            gamePaused = false;
-
-            openLevelSelect();
-
-        }
-    );
-}
-
-
-
-
-if (winLevelSelectButton) {
-
-    winLevelSelectButton.addEventListener(
-        "click",
-        () => {
-
-            winScreen.style.display = "none";
-            gameWon = false;
-
-            openLevelSelect();
-
-        }
-    );
-}
-
-
-
+/* =========================================================
+   INITIAL RENDER
+========================================================= */
 
 renderDungeon();

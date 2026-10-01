@@ -233,6 +233,13 @@ header::before {
             #0a1628
         );
 
+    background-image:
+        url("assets/hud/emblem.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 40px 40px;
+    image-rendering: pixelated;
+
     border: 1px solid var(--gold-deep);
 
     box-shadow:
@@ -241,6 +248,8 @@ header::before {
         inset 0 1px 0 rgba(255, 227, 154, 0.1);
 
     animation: titlePulse 2.8s ease-in-out infinite;
+
+    color: transparent;
 }
 
 .title-icon img {
@@ -701,13 +710,13 @@ main {
 .keySprite,
 .treasureSprite,
 .doorSprite,
-.trapSprite,
-.enemySprite {
+.trapSprite {
     width: 80%;
     height: 80%;
 
     background-repeat: no-repeat;
     background-size: 200% 200%;
+    background-position: 0% 0%;
 
     image-rendering: pixelated;
     shape-rendering: crispEdges;
@@ -724,6 +733,7 @@ main {
 .keySprite {
     background-image: url("assets/key/key.svg");
     background-size: 200% 200%;
+    background-position: 0% 0%;
     width: 70%;
     height: 70%;
 
@@ -732,7 +742,7 @@ main {
         drop-shadow(0 2px 2px rgba(0, 0, 0, 0.55));
 
     animation:
-        keyFrames 1.1s steps(4) infinite,
+        keyFrames 1.1s step-end infinite,
         keyFloat 2.2s ease-in-out infinite;
 }
 
@@ -755,6 +765,7 @@ main {
 .treasureSprite {
     background-image: url("assets/treasure/treasure.svg");
     background-size: 200% 200%;
+    background-position: 0% 0%;
     width: 84%;
     height: 84%;
 
@@ -764,7 +775,7 @@ main {
         drop-shadow(0 3px 3px rgba(0, 0, 0, 0.55));
 
     animation:
-        treasureFrames 1.6s steps(4) infinite,
+        treasureFrames 1.6s step-end infinite,
         treasurePulse 2.4s ease-in-out infinite;
 }
 
@@ -796,6 +807,7 @@ main {
 .doorSprite {
     background-image: url("assets/door/door.svg");
     background-size: 200% 200%;
+    background-position: 0% 0%;
     width: 86%;
     height: 86%;
 
@@ -823,8 +835,8 @@ main {
 }
 
 @keyframes doorFramesUnlocked {
-    0%   { background-position: 0% 100%; }
-    100% { background-position: 100% 100%; }
+    from { background-position-x: 0%; }
+    to   { background-position-x: 200%; }
 }
 
 .door.occupied .doorSprite {
@@ -838,6 +850,7 @@ main {
 .trapSprite {
     background-image: url("assets/trap/trap.svg");
     background-size: 200% 200%;
+    background-position: 0% 0%;
     width: 82%;
     height: 82%;
 
@@ -846,7 +859,7 @@ main {
         drop-shadow(0 2px 2px rgba(0, 0, 0, 0.6));
 
     animation:
-        trapFrames 1s steps(4) infinite,
+        trapFrames 1s step-end infinite,
         trapFlicker 0.9s ease-in-out infinite;
 }
 
@@ -893,6 +906,7 @@ main {
     background-image: url("assets/player/player.svg");
     background-repeat: no-repeat;
     background-size: 400% 400%;
+    background-position: 0% 0%;
 
     image-rendering: pixelated;
     shape-rendering: crispEdges;
@@ -934,7 +948,7 @@ main {
 
 @keyframes playerWalk {
     from { background-position-x: 0%; }
-    to   { background-position-x: 100%; }
+    to   { background-position-x: 133.333%; }
 }
 
 
@@ -978,7 +992,7 @@ main {
 
 @keyframes enemyIdle {
     from { background-position-x: 0%; }
-    to   { background-position-x: 100%; }
+    to   { background-position-x: 133.333%; }
 }
 
 @keyframes enemyBob {
@@ -1861,3 +1875,7 @@ button {
     .controls { margin-top: 6px; }
     .instructions { margin-top: 4px; font-size: 14px; }
 }
+
+
+
+
