@@ -1,12 +1,11 @@
 
-
-
-
 let enemy = null;
+let keyEnemy = null;
 
 const enemySettings = {
     patrolInterval: 700
 };
+
 
 
 
@@ -18,13 +17,19 @@ function initializeEnemy(level) {
     stopEnemy();
 
     enemy = null;
+    keyEnemy = null;
 
-    
-    if (level !== 1) {
+    // Preserve the original Level 2 Treasure Guardian.
+    if (level === 1) {
+        createTreasureGuard();
         return;
     }
 
-    createTreasureGuard();
+    // Add both guardians on Level 3.
+    if (level === 2) {
+        createTreasureGuard();
+        createKeyGuard();
+    }
 }
 
 
@@ -41,7 +46,6 @@ function createTreasureGuard() {
         return;
     }
 
-
     const solutionPath =
         findSafeSolutionPath(dungeon);
 
@@ -49,20 +53,17 @@ function createTreasureGuard() {
         return;
     }
 
-
     const patrolPath =
         buildGuardPatrol(
             dungeon,
             solutionPath
         );
 
-
     if (
         patrolPath.length < 2
     ) {
         return;
     }
-
 
     enemy = {
 
@@ -84,8 +85,63 @@ function createTreasureGuard() {
         collisionPending: false
     };
 
-
     startEnemyPatrol();
+}
+
+
+
+
+
+function createKeyGuard() {
+
+    const dungeon =
+        dungeons[currentLevel];
+
+    if (!dungeon) {
+        return;
+    }
+
+    const solutionPath =
+        findSafeSolutionPath(dungeon);
+
+    if (!solutionPath) {
+        return;
+    }
+
+    const patrolPath =
+        buildGuardPatrol(
+            dungeon,
+            solutionPath,
+            "K"
+        );
+
+    if (
+        patrolPath.length < 2
+    ) {
+        return;
+    }
+
+    keyEnemy = {
+
+        row:
+            patrolPath[0].row,
+
+        col:
+            patrolPath[0].col,
+
+        path:
+            patrolPath,
+
+        pathIndex: 0,
+
+        direction: 1,
+
+        interval: null,
+
+        collisionPending: false
+    };
+
+    startKeyEnemyPatrol();
 }
 
 
@@ -100,7 +156,6 @@ function findSafeSolutionPath(dungeon) {
         col: 1
     };
 
-
     const startKey =
         stateKey(
             start.row,
@@ -108,7 +163,6 @@ function findSafeSolutionPath(dungeon) {
             false,
             false
         );
-
 
     const queue = [
         {
@@ -119,25 +173,20 @@ function findSafeSolutionPath(dungeon) {
         }
     ];
 
-
     const visited =
         new Set([
             startKey
         ]);
 
-
     const previous =
         new Map();
-
 
     const states =
         new Map([
             [startKey, queue[0]]
         ]);
 
-
     let goalKey = null;
-
 
     for (
         let index = 0;
@@ -148,7 +197,6 @@ function findSafeSolutionPath(dungeon) {
         const current =
             queue[index];
 
-
         const cell =
             dungeon[
                 current.row
@@ -156,16 +204,13 @@ function findSafeSolutionPath(dungeon) {
                 current.col
             ];
 
-
         const hasKey =
             current.hasKey ||
             cell === "K";
 
-
         const passedDoor =
             current.passedDoor ||
             cell === "D";
-
 
         const currentKey =
             stateKey(
@@ -174,7 +219,6 @@ function findSafeSolutionPath(dungeon) {
                 hasKey,
                 passedDoor
             );
-
 
         if (
             cell === "T" &&
@@ -187,7 +231,6 @@ function findSafeSolutionPath(dungeon) {
 
             break;
         }
-
 
         const directions = [
 
@@ -213,7 +256,6 @@ function findSafeSolutionPath(dungeon) {
 
         ];
 
-
         for (
             const direction
             of directions
@@ -223,11 +265,9 @@ function findSafeSolutionPath(dungeon) {
                 current.row +
                 direction.row;
 
-
             const col =
                 current.col +
                 direction.col;
-
 
             if (
                 row < 0 ||
@@ -238,10 +278,8 @@ function findSafeSolutionPath(dungeon) {
                 continue;
             }
 
-
             const nextCell =
                 dungeon[row][col];
-
 
             if (
                 nextCell === "#" ||
@@ -250,7 +288,6 @@ function findSafeSolutionPath(dungeon) {
                 continue;
             }
 
-
             if (
                 nextCell === "D" &&
                 !hasKey
@@ -258,16 +295,13 @@ function findSafeSolutionPath(dungeon) {
                 continue;
             }
 
-
             const nextHasKey =
                 hasKey ||
                 nextCell === "K";
 
-
             const nextPassedDoor =
                 passedDoor ||
                 nextCell === "D";
-
 
             const nextKey =
                 stateKey(
@@ -277,24 +311,20 @@ function findSafeSolutionPath(dungeon) {
                     nextPassedDoor
                 );
 
-
             if (
                 visited.has(nextKey)
             ) {
                 continue;
             }
 
-
             visited.add(
                 nextKey
             );
-
 
             previous.set(
                 nextKey,
                 currentKey
             );
-
 
             const nextState = {
 
@@ -308,12 +338,10 @@ function findSafeSolutionPath(dungeon) {
                     nextPassedDoor
             };
 
-
             states.set(
                 nextKey,
                 nextState
             );
-
 
             queue.push(
                 nextState
@@ -321,23 +349,19 @@ function findSafeSolutionPath(dungeon) {
         }
     }
 
-
     if (!goalKey) {
         return null;
     }
-
 
     const path = [];
 
     let key =
         goalKey;
 
-
     while (key) {
 
         const state =
             states.get(key);
-
 
         path.push({
 
@@ -348,11 +372,9 @@ function findSafeSolutionPath(dungeon) {
                 state.col
         });
 
-
         key =
             previous.get(key);
     }
-
 
     return path.reverse();
 }
@@ -381,10 +403,9 @@ function stateKey(
 
 function buildGuardPatrol(
     dungeon,
-    solutionPath
+    solutionPath,
+    objectiveSymbol = "T"
 ) {
-
-    
 
     const treasureIndex =
         solutionPath.findIndex(
@@ -393,9 +414,8 @@ function buildGuardPatrol(
                     cell.row
                 ][
                     cell.col
-                ] === "T"
+                ] === objectiveSymbol
         );
-
 
     if (
         treasureIndex < 1
@@ -403,21 +423,13 @@ function buildGuardPatrol(
         return [];
     }
 
-
-    
-
-
     const patrolCells = new Map();
-
-
-    
 
     const startIndex =
         Math.max(
             1,
             treasureIndex - 4
         );
-
 
     for (
         let index = startIndex;
@@ -428,10 +440,8 @@ function buildGuardPatrol(
         const cell =
             solutionPath[index];
 
-
         const key =
             `${cell.row},${cell.col}`;
-
 
         patrolCells.set(
             key,
@@ -442,17 +452,12 @@ function buildGuardPatrol(
         );
     }
 
-
-    
-
     const treasure =
         solutionPath[
             treasureIndex
         ];
 
-
     const searchRadius = 2;
-
 
     for (
         let row = 1;
@@ -466,14 +471,11 @@ function buildGuardPatrol(
             col++
         ) {
 
-            
-
             if (
                 dungeon[row][col] !== "."
             ) {
                 continue;
             }
-
 
             const distance =
                 Math.abs(
@@ -485,17 +487,14 @@ function buildGuardPatrol(
                     treasure.col
                 );
 
-
             if (
                 distance > searchRadius
             ) {
                 continue;
             }
 
-
             const key =
                 `${row},${col}`;
-
 
             patrolCells.set(
                 key,
@@ -507,14 +506,8 @@ function buildGuardPatrol(
         }
     }
 
-
-    
-
     const candidates =
         [...patrolCells.values()];
-
-
-    
 
     const patrolPath =
         findConnectedPatrol(
@@ -523,7 +516,6 @@ function buildGuardPatrol(
             solutionPath,
             treasure
         );
-
 
     return patrolPath;
 }
@@ -546,7 +538,6 @@ function findConnectedPatrol(
         return [];
     }
 
-
     const candidateKeys =
         new Set(
             candidates.map(
@@ -554,9 +545,6 @@ function findConnectedPatrol(
                     `${cell.row},${cell.col}`
             )
         );
-
-
-    
 
     const orderedCandidates =
         [...candidates].sort(
@@ -572,7 +560,6 @@ function findConnectedPatrol(
                         treasure.col
                     );
 
-
                 const distanceB =
                     Math.abs(
                         b.row -
@@ -583,7 +570,6 @@ function findConnectedPatrol(
                         treasure.col
                     );
 
-
                 return (
                     distanceA -
                     distanceB
@@ -591,9 +577,7 @@ function findConnectedPatrol(
             }
         );
 
-
     let bestPath = [];
-
 
     for (
         const start
@@ -604,12 +588,10 @@ function findConnectedPatrol(
             start
         ];
 
-
         const used =
             new Set([
                 `${start.row},${start.col}`
             ]);
-
 
         function extendPath() {
 
@@ -622,21 +604,16 @@ function findConnectedPatrol(
                     [...path];
             }
 
-
-            
-
             if (
                 path.length >= 8
             ) {
                 return;
             }
 
-
             const current =
                 path[
                     path.length - 1
                 ];
-
 
             const directions = [
 
@@ -662,7 +639,6 @@ function findConnectedPatrol(
 
             ];
 
-
             const neighbors =
                 directions
                     .map(
@@ -683,7 +659,6 @@ function findConnectedPatrol(
                             const key =
                                 `${cell.row},${cell.col}`;
 
-
                             return (
                                 candidateKeys.has(
                                     key
@@ -695,7 +670,6 @@ function findConnectedPatrol(
                         }
                     );
 
-
             for (
                 const next
                 of shuffleEnemyCandidates(
@@ -706,19 +680,15 @@ function findConnectedPatrol(
                 const key =
                     `${next.row},${next.col}`;
 
-
                 used.add(key);
 
                 path.push(next);
 
-
                 extendPath();
-
 
                 path.pop();
 
                 used.delete(key);
-
 
                 if (
                     bestPath.length >= 8
@@ -728,9 +698,7 @@ function findConnectedPatrol(
             }
         }
 
-
         extendPath();
-
 
         if (
             bestPath.length >= 8
@@ -739,15 +707,11 @@ function findConnectedPatrol(
         }
     }
 
-
-    
-
     if (
         bestPath.length < 2
     ) {
         return [];
     }
-
 
     return bestPath;
 }
@@ -764,7 +728,6 @@ function shuffleEnemyCandidates(
     const shuffled =
         [...candidates];
 
-
     for (
         let index =
             shuffled.length - 1;
@@ -778,7 +741,6 @@ function shuffleEnemyCandidates(
                 (index + 1)
             );
 
-
         [
             shuffled[index],
             shuffled[swapIndex]
@@ -787,7 +749,6 @@ function shuffleEnemyCandidates(
             shuffled[index]
         ];
     }
-
 
     return shuffled;
 }
@@ -803,9 +764,7 @@ function startEnemyPatrol() {
         return;
     }
 
-
     stopEnemy();
-
 
     enemy.interval =
         setInterval(
@@ -825,7 +784,6 @@ function startEnemyPatrol() {
                 ) {
                     return;
                 }
-
 
                 movePatrolEnemy();
 
@@ -850,21 +808,14 @@ function movePatrolEnemy() {
         return;
     }
 
-
-    
-
     if (
         checkEnemyCollision()
     ) {
         return;
     }
 
-
     enemy.pathIndex +=
         enemy.direction;
-
-
-    
 
     if (
         enemy.pathIndex >=
@@ -873,13 +824,9 @@ function movePatrolEnemy() {
 
         enemy.direction = -1;
 
-
         enemy.pathIndex =
             enemy.path.length - 2;
     }
-
-
-    
 
     if (
         enemy.pathIndex < 0
@@ -887,38 +834,176 @@ function movePatrolEnemy() {
 
         enemy.direction = 1;
 
-
         enemy.pathIndex = 1;
     }
-
 
     const next =
         enemy.path[
             enemy.pathIndex
         ];
 
+    if (!next) {
+        return;
+    }
+
+    enemy.row =
+        next.row;
+
+    enemy.col =
+        next.col;
+
+    checkEnemyCollision();
+
+    renderDungeon();
+}
+
+
+
+
+
+
+function startKeyEnemyPatrol() {
+
+    if (!keyEnemy) {
+        return;
+    }
+
+    keyEnemy.interval =
+        setInterval(
+            () => {
+
+                if (
+                    (
+                        typeof gamePaused !==
+                        "undefined" &&
+                        gamePaused
+                    ) ||
+                    (
+                        typeof gameWon !==
+                        "undefined" &&
+                        gameWon
+                    )
+                ) {
+                    return;
+                }
+
+                moveKeyPatrolEnemy();
+
+            },
+
+            enemySettings.patrolInterval
+        );
+}
+
+
+
+
+
+
+function moveKeyPatrolEnemy() {
+
+    if (
+        !keyEnemy ||
+        !keyEnemy.path ||
+        keyEnemy.path.length < 2
+    ) {
+        return;
+    }
+
+    if (
+        checkKeyEnemyCollision()
+    ) {
+        return;
+    }
+
+    keyEnemy.pathIndex +=
+        keyEnemy.direction;
+
+    if (
+        keyEnemy.pathIndex >=
+        keyEnemy.path.length
+    ) {
+
+        keyEnemy.direction = -1;
+
+        keyEnemy.pathIndex =
+            keyEnemy.path.length - 2;
+    }
+
+    if (
+        keyEnemy.pathIndex < 0
+    ) {
+
+        keyEnemy.direction = 1;
+
+        keyEnemy.pathIndex = 1;
+    }
+
+    const next =
+        keyEnemy.path[
+            keyEnemy.pathIndex
+        ];
 
     if (!next) {
         return;
     }
 
-
-    enemy.row =
+    keyEnemy.row =
         next.row;
 
-
-    enemy.col =
+    keyEnemy.col =
         next.col;
 
-
-    
-
-    checkEnemyCollision();
-
-
-    
+    checkKeyEnemyCollision();
 
     renderDungeon();
+}
+
+
+
+
+
+
+function checkKeyEnemyCollision() {
+
+    if (
+        !keyEnemy
+    ) {
+        return false;
+    }
+
+    if (
+        keyEnemy.collisionPending
+    ) {
+        return false;
+    }
+
+    if (
+        keyEnemy.row !== player.row ||
+        keyEnemy.col !== player.col
+    ) {
+        return false;
+    }
+
+    keyEnemy.collisionPending = true;
+
+    stopEnemy();
+
+    setTimeout(
+        () => {
+
+            alert(
+                "The guard caught you!"
+            );
+
+            resetLevel();
+
+        },
+
+        100
+    );
+
+    return true;
 }
 
 
@@ -934,13 +1019,11 @@ function checkEnemyCollision() {
         return false;
     }
 
-
     if (
         enemy.collisionPending
     ) {
         return false;
     }
-
 
     if (
         enemy.row !== player.row ||
@@ -949,13 +1032,10 @@ function checkEnemyCollision() {
         return false;
     }
 
-
     enemy.collisionPending =
         true;
 
-
     stopEnemy();
-
 
     setTimeout(
         () => {
@@ -964,14 +1044,12 @@ function checkEnemyCollision() {
                 "The guard caught you!"
             );
 
-
             resetLevel();
 
         },
 
         100
     );
-
 
     return true;
 }
@@ -992,8 +1070,20 @@ function stopEnemy() {
             enemy.interval
         );
 
-
         enemy.interval =
+            null;
+    }
+
+    if (
+        keyEnemy &&
+        keyEnemy.interval
+    ) {
+
+        clearInterval(
+            keyEnemy.interval
+        );
+
+        keyEnemy.interval =
             null;
     }
 }
@@ -1010,11 +1100,17 @@ function getEnemyAt(
 
     return Boolean(
 
-        enemy &&
+        (
+            enemy &&
+            enemy.row === row &&
+            enemy.col === col
+        ) ||
 
-        enemy.row === row &&
-
-        enemy.col === col
+        (
+            keyEnemy &&
+            keyEnemy.row === row &&
+            keyEnemy.col === col
+        )
 
     );
 }
