@@ -1,6 +1,9 @@
 
 let enemy = null;
 let keyEnemy = null;
+let collisionResetPending = false;
+let collisionResetTimer = null;
+const levelThreePatrolCells = new Set();
 
 const enemySettings = {
     patrolInterval: 700
@@ -15,6 +18,11 @@ const enemySettings = {
 function initializeEnemy(level) {
 
     stopEnemy();
+
+    clearTimeout(collisionResetTimer);
+    collisionResetTimer = null;
+    collisionResetPending = false;
+    levelThreePatrolCells.clear();
 
     enemy = null;
     keyEnemy = null;
@@ -54,10 +62,16 @@ function createTreasureGuard() {
     }
 
     const patrolPath =
-        buildGuardPatrol(
-            dungeon,
-            solutionPath
-        );
+        currentLevel === 2
+            ? buildLevelThreeGuardPatrol(
+                dungeon,
+                solutionPath,
+                "T"
+            )
+            : buildGuardPatrol(
+                dungeon,
+                solutionPath
+            );
 
     if (
         patrolPath.length < 2
@@ -109,7 +123,7 @@ function createKeyGuard() {
     }
 
     const patrolPath =
-        buildGuardPatrol(
+        buildLevelThreeGuardPatrol(
             dungeon,
             solutionPath,
             "K"
@@ -521,6 +535,118 @@ function buildGuardPatrol(
 }
 
 
+function buildLevelThreeGuardPatrol(
+    dungeon,
+    solutionPath,
+    objectiveSymbol
+) {
+
+    const objectiveIndex =
+        solutionPath.findIndex(
+            cell =>
+                dungeon[cell.row][cell.col] ===
+                objectiveSymbol
+        );
+
+    if (objectiveIndex < 0) {
+        return [];
+    }
+
+    const objective =
+        solutionPath[objectiveIndex];
+
+    const solutionCells =
+        new Set(
+            solutionPath.map(
+                cell => `${cell.row},${cell.col}`
+            )
+        );
+
+    const otherObjectives = new Set();
+
+    for (
+        let row = 0;
+        row < dungeon.length;
+        row++
+    ) {
+        for (
+            let col = 0;
+            col < dungeon[row].length;
+            col++
+        ) {
+            const cell = dungeon[row][col];
+
+            if (
+                ["K", "D", "T"].includes(cell) &&
+                cell !== objectiveSymbol
+            ) {
+                otherObjectives.add(`${row},${col}`);
+            }
+        }
+    }
+
+    const directions = shuffleEnemyCandidates([
+        { row: -1, col: 0 },
+        { row: 1, col: 0 },
+        { row: 0, col: -1 },
+        { row: 0, col: 1 }
+    ]);
+
+    for (const direction of directions) {
+        const patrolPath = [
+            {
+                row: objective.row + direction.row * 2,
+                col: objective.col + direction.col * 2
+            },
+            {
+                row: objective.row + direction.row,
+                col: objective.col + direction.col
+            },
+            objective
+        ];
+
+        const canUsePath =
+            patrolPath.slice(0, 2).every(({ row, col }) => {
+                if (
+                    row <= 0 ||
+                    row >= dungeon.length - 1 ||
+                    col <= 0 ||
+                    col >= dungeon[row].length - 1
+                ) {
+                    return false;
+                }
+
+                const key = `${row},${col}`;
+                const cell = dungeon[row][col];
+
+                return (
+                    !solutionCells.has(key) &&
+                    !otherObjectives.has(key) &&
+                    !levelThreePatrolCells.has(key) &&
+                    (cell === "." || cell === "#")
+                );
+            });
+
+        if (!canUsePath) {
+            continue;
+        }
+
+        for (const cell of patrolPath.slice(0, 2)) {
+            dungeon[cell.row][cell.col] = ".";
+            levelThreePatrolCells.add(`${cell.row},${cell.col}`);
+        }
+
+        levelThreePatrolCells.add(
+            `${objective.row},${objective.col}`
+        );
+
+        return patrolPath;
+    }
+
+    return [];
+}
+
+
 
 
 
@@ -801,6 +927,8 @@ function startEnemyPatrol() {
 function movePatrolEnemy() {
 
     if (
+        collisionResetPending ||
+        trapTriggered ||
         !enemy ||
         !enemy.path ||
         enemy.path.length < 2
@@ -903,6 +1031,8 @@ function startKeyEnemyPatrol() {
 function moveKeyPatrolEnemy() {
 
     if (
+        collisionResetPending ||
+        trapTriggered ||
         !keyEnemy ||
         !keyEnemy.path ||
         keyEnemy.path.length < 2
@@ -973,37 +1103,13 @@ function checkKeyEnemyCollision() {
     }
 
     if (
-        keyEnemy.collisionPending
-    ) {
-        return false;
-    }
-
-    if (
         keyEnemy.row !== player.row ||
         keyEnemy.col !== player.col
     ) {
         return false;
     }
 
-    keyEnemy.collisionPending = true;
-
-    stopEnemy();
-
-    setTimeout(
-        () => {
-
-            alert(
-                "The guard caught you!"
-            );
-
-            resetLevel();
-
-        },
-
-        100
-    );
-
-    return true;
+    return handleEnemyCollision();
 }
 
 
@@ -1020,36 +1126,39 @@ function checkEnemyCollision() {
     }
 
     if (
-        enemy.collisionPending
-    ) {
-        return false;
-    }
-
-    if (
         enemy.row !== player.row ||
         enemy.col !== player.col
     ) {
         return false;
     }
 
-    enemy.collisionPending =
-        true;
+    return handleEnemyCollision();
+}
 
+
+function handleEnemyCollision() {
+
+    if (collisionResetPending) {
+        return true;
+    }
+
+    collisionResetPending = true;
     stopEnemy();
 
-    setTimeout(
-        () => {
+    collisionResetTimer =
+        setTimeout(
+            () => {
+                collisionResetTimer = null;
 
-            alert(
-                "The guard caught you!"
-            );
+                if (!collisionResetPending) {
+                    return;
+                }
 
-            resetLevel();
-
-        },
-
-        100
-    );
+                alert("The guard caught you!");
+                resetLevel();
+            },
+            100
+        );
 
     return true;
 }

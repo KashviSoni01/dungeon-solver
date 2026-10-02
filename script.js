@@ -677,4 +677,5 @@ if (playAgainButton) {
    INITIAL RENDER
 ========================================================= */
 
+initializeEnemy(currentLevel);
 renderDungeon();

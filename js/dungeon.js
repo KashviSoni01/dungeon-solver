@@ -972,7 +972,12 @@ function generateDungeon(
 
     
 
-    return createFallbackDungeon(level);
+    const fallbackDungeon =
+        createFallbackDungeon(level);
+
+    return isDungeonSolvable(fallbackDungeon)
+        ? fallbackDungeon
+        : createGuaranteedFallbackDungeon(level);
 }
 
 
@@ -1068,10 +1073,102 @@ function createFallbackDungeon(
 
     
 
-    dungeon[2][3] = "X";
+    if (level === 2) {
 
-    dungeon[4][5] = "X";
+        const safePath = [];
 
+        for (
+            let row = 1;
+            row < size - 1;
+            row++
+        ) {
+            safePath.push({ row, col: 1 });
+        }
+
+        for (
+            let col = 2;
+            col < size - 1;
+            col++
+        ) {
+            safePath.push({ row: size - 2, col });
+        }
+
+        placeTraps(dungeon, safePath, 6);
+
+    } else {
+
+        dungeon[2][3] = "X";
+
+        dungeon[4][5] = "X";
+    }
+
+
+    return dungeon;
+}
+
+
+function createGuaranteedFallbackDungeon(level = 0) {
+
+    const size =
+        level === 0
+            ? 15
+            : level === 1
+                ? 17
+                : 21;
+
+    const dungeon =
+        Array.from(
+            { length: size },
+            (_, row) =>
+                Array.from(
+                    { length: size },
+                    (_, col) =>
+                        row > 0 &&
+                        row < size - 1 &&
+                        col > 0 &&
+                        col < size - 1
+                            ? "."
+                            : "#"
+                )
+        );
+
+    const key = { row: 1, col: 3 };
+    const door = { row: 1, col: 6 };
+    const treasure = {
+        row: size - 2,
+        col: size - 2
+    };
+
+    dungeon[key.row][key.col] = "K";
+    dungeon[door.row][door.col] = "D";
+    dungeon[treasure.row][treasure.col] = "T";
+
+    const safePath = [];
+
+    for (let col = 1; col <= door.col; col++) {
+        safePath.push({ row: 1, col });
+    }
+
+    for (let row = 2; row <= treasure.row; row++) {
+        safePath.push({ row, col: door.col });
+    }
+
+    for (
+        let col = door.col + 1;
+        col <= treasure.col;
+        col++
+    ) {
+        safePath.push({ row: treasure.row, col });
+    }
+
+    const trapCount =
+        level === 0
+            ? 2
+            : level === 1
+                ? 4
+                : 6;
+
+    placeTraps(dungeon, safePath, trapCount);
 
     return dungeon;
 }

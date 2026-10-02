@@ -12,6 +12,7 @@ let trapTriggered = false;
 
 let isPlayerMoving = false;
 let movementAnimationTimer = null;
+let trapResetTimer = null;
 
 
 
@@ -25,7 +26,11 @@ function movePlayer(
     if (
         gameWon ||
         gamePaused ||
-        trapTriggered
+        trapTriggered ||
+        (
+            typeof collisionResetPending !== "undefined" &&
+            collisionResetPending
+        )
     ) {
         return;
     }
@@ -75,6 +80,13 @@ function movePlayer(
         !hasKey
     ) {
 
+        return;
+    }
+
+    if (
+        typeof getEnemyAt === "function" &&
+        getEnemyAt(newRow, newCol)
+    ) {
         return;
     }
 
@@ -158,11 +170,17 @@ function movePlayer(
 
         trapTriggered = true;
 
+        if (typeof stopEnemy === "function") {
+            stopEnemy();
+        }
+
         renderDungeon();
 
 
-        setTimeout(
+        trapResetTimer = setTimeout(
             () => {
+
+                trapResetTimer = null;
 
                 alert(
                     "You stepped on a trap!"
@@ -197,6 +215,9 @@ function resetPlayer() {
     clearTimeout(
         movementAnimationTimer
     );
+
+    clearTimeout(trapResetTimer);
+    trapResetTimer = null;
 
 
     player = {
