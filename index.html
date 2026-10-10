@@ -12,6 +12,10 @@
 
     <title>Dungeon Solver</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
     <link
         rel="stylesheet"
         href="style.css"
@@ -21,6 +25,477 @@
 
 
 <body>
+
+    <div id="app">
+
+    <!-- =========================================
+         HOMEPAGE
+    ========================================== -->
+
+    <div class="homepage">
+
+        <!-- =====================================
+             NAVIGATION
+        ====================================== -->
+
+        <nav class="homepage-nav" aria-label="Main navigation">
+
+            <a href="#homepage-hero" class="homepage-nav-brand" aria-label="Dungeon Solver - Home">
+                <span class="homepage-nav-logo" aria-hidden="true"></span>
+                <span class="homepage-nav-wordmark">DUNGEON<br>SOLVER</span>
+            </a>
+
+            <button
+                class="homepage-nav-toggle"
+                aria-label="Toggle navigation menu"
+                aria-expanded="false"
+                aria-controls="homepage-nav-links"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="homepage-nav-links" id="homepage-nav-links">
+                <li><a href="#homepage-hero" data-nav="home">Home</a></li>
+                <li><a href="#homepage-levels" data-nav="levels">Explore Levels</a></li>
+                <li><a href="#homepage-tutorial" data-nav="how">How to Play</a></li>
+                <li><a href="#homepage-features" data-nav="about">About the Game</a></li>
+                <li class="homepage-nav-cta">
+                    <button class="hp-cta-gold hp-nav-play" data-action="enter-dungeon" aria-label="Start playing Dungeon Solver">
+                        Play Now
+                    </button>
+                </li>
+            </ul>
+
+        </nav>
+
+
+        <!-- =====================================
+             HERO SECTION
+        ====================================== -->
+
+        <section class="homepage-hero" id="homepage-hero">
+
+            <div class="homepage-hero-particles" aria-hidden="true"></div>
+            <div class="homepage-hero-vignette" aria-hidden="true"></div>
+
+            <div class="homepage-hero-inner">
+
+                <div class="homepage-hero-copy">
+
+                    <p class="homepage-hero-eyebrow" aria-hidden="true">
+                        ◆ A PREMIUM PUZZLE ADVENTURE ◆
+                    </p>
+
+                    <h1>DUNGEON<br>SOLVER</h1>
+
+                    <p class="homepage-hero-tagline">
+                        Every step is a choice. Every dungeon hides a secret.
+                    </p>
+
+                    <p class="homepage-hero-desc">
+                        Navigate treacherous labyrinths, collect ancient keys,
+                        evade cunning traps and moving guardians, and claim the
+                        treasure that waits in the darkness. Three trials.
+                        One adventurer. No second chances.
+                    </p>
+
+                    <div class="homepage-hero-ctas">
+                        <button class="hp-cta-gold hp-hero-enter" data-action="enter-dungeon" aria-label="Enter the dungeon and begin playing">
+                            Enter the Dungeon
+                        </button>
+                        <a href="#homepage-levels" class="hp-cta-secondary hp-hero-explore" aria-label="Scroll to explore the three dungeon trials">
+                            Explore the Levels
+                        </a>
+                        <button class="hp-cta-ghost hp-hero-continue" data-action="continue-adventure" aria-label="Continue your last saved adventure" hidden>
+                            Continue Adventure
+                        </button>
+                    </div>
+
+                    <div class="homepage-hero-scroll" aria-hidden="true">
+                        <div class="homepage-hero-scroll-line"></div>
+                        <span>SCROLL TO EXPLORE</span>
+                    </div>
+
+                </div>
+
+                <div class="homepage-hero-illustration" role="img" aria-label="A dark stone dungeon corridor with glowing torches leading to a distant magical portal">
+
+                    <div class="hero-scene" aria-hidden="true">
+                        <div class="hero-scene-fog"></div>
+                        <div class="hero-scene-corridor">
+                            <div class="hero-wall hero-wall-left"></div>
+                            <div class="hero-wall hero-wall-right"></div>
+                            <div class="hero-wall hero-wall-floor"></div>
+                            <div class="hero-wall hero-wall-ceil"></div>
+                        </div>
+                        <div class="hero-torch hero-torch-left"></div>
+                        <div class="hero-torch hero-torch-right"></div>
+                        <div class="hero-portal" aria-hidden="true"></div>
+                        <div class="hero-treasure" aria-hidden="true"></div>
+                        <div class="hero-runes" aria-hidden="true"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             LEVEL SELECTION
+        ====================================== -->
+
+        <section class="homepage-levels" id="homepage-levels">
+
+            <div class="homepage-section-head">
+                <p class="homepage-section-eyebrow">◆ THREE TRIALS AWAIT ◆</p>
+                <h2>Choose Your Dungeon</h2>
+                <p class="homepage-section-sub">
+                    Three labyrinths of escalating danger. Master each to unlock the next.
+                </p>
+            </div>
+
+            <div class="homepage-level-grid" id="homepageLevelList">
+                <!-- dynamic level cards injected by js/homepage.js -->
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             FEATURES
+        ====================================== -->
+
+        <section class="homepage-features" id="homepage-features">
+
+            <div class="homepage-section-head">
+                <p class="homepage-section-eyebrow">◆ WHAT AWAITS INSIDE ◆</p>
+                <h2>Forge Your Path to the Treasure</h2>
+            </div>
+
+            <div class="homepage-feature-grid">
+
+                <article class="homepage-feature">
+                    <div class="homepage-feature-icon" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" width="48" height="48">
+                            <rect x="4" y="4" width="12" height="12" fill="#1e324e"/>
+                            <rect x="4" y="20" width="12" height="12" fill="#1e324e"/>
+                            <rect x="4" y="36" width="12" height="12" fill="#1e324e"/>
+                            <rect x="4" y="52" width="12" height="12" fill="#1e324e"/>
+                            <rect x="20" y="4" width="12" height="12" fill="#1a2e4b"/>
+                            <rect x="20" y="20" width="12" height="12" fill="#2a4668"/>
+                            <rect x="20" y="36" width="12" height="12" fill="#2a4668"/>
+                            <rect x="20" y="52" width="12" height="12" fill="#1e324e"/>
+                            <rect x="36" y="4" width="12" height="12" fill="#1e324e"/>
+                            <rect x="36" y="20" width="12" height="12" fill="#2a4668"/>
+                            <rect x="36" y="36" width="12" height="12" fill="#1a2e4b"/>
+                            <rect x="36" y="52" width="12" height="12" fill="#1e324e"/>
+                            <rect x="52" y="4" width="8" height="8" fill="#1e324e"/>
+                            <rect x="52" y="20" width="8" height="8" fill="#1e324e"/>
+                            <rect x="52" y="36" width="8" height="8" fill="#1e324e"/>
+                            <rect x="52" y="52" width="8" height="8" fill="#1e324e"/>
+                            <path d="M22 22 L22 34 L38 34 L38 22 Z" fill="none" stroke="#5dd3ff" stroke-width="1.2" stroke-dasharray="3 2" opacity="0.75"/>
+                            <circle cx="25" cy="25" r="1.6" fill="#8de4ff"/>
+                            <circle cx="35" cy="31" r="1.6" fill="#8de4ff"/>
+                        </svg>
+                    </div>
+                    <h3>Procedural Labyrinths</h3>
+                    <p>Every dungeon is freshly carved with DFS maze generation, guaranteed solvable, with varied loops and hidden corridors.</p>
+                </article>
+
+                <article class="homepage-feature">
+                    <div class="homepage-feature-icon" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" width="48" height="48">
+                            <circle cx="20" cy="32" r="9" fill="none" stroke="#ffc857" stroke-width="3"/>
+                            <circle cx="20" cy="32" r="2.5" fill="#0a1425"/>
+                            <rect x="28" y="29" width="26" height="6" fill="#ffc857"/>
+                            <rect x="44" y="35" width="4" height="6" fill="#ffc857"/>
+                            <rect x="50" y="35" width="4" height="8" fill="#ffc857"/>
+                            <path d="M28 29 L50 29 L50 23 L28 23 Z" fill="#ffe39a" opacity="0.35"/>
+                        </svg>
+                    </div>
+                    <h3>Keys &amp; Locked Doors</h3>
+                    <p>Find the golden key before reaching the treasure. Paths beyond the locked door are unreachable until you hold it.</p>
+                </article>
+
+                <article class="homepage-feature">
+                    <div class="homepage-feature-icon" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" width="48" height="48">
+                            <rect x="6" y="44" width="52" height="6" fill="#2a4668"/>
+                            <polygon points="12,44 18,18 24,44" fill="#d94b63"/>
+                            <polygon points="22,44 28,22 34,44" fill="#ff6a82"/>
+                            <polygon points="32,44 38,16 44,44" fill="#d94b63"/>
+                            <polygon points="42,44 48,26 54,44" fill="#ff6a82"/>
+                            <path d="M18 18 L18 12 L20 10 L22 12 L22 18" fill="none" stroke="#ff8da2" stroke-width="1.2" opacity="0.7"/>
+                            <path d="M38 16 L38 9 L40 7 L42 9 L42 16" fill="none" stroke="#ff8da2" stroke-width="1.2" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <h3>Hidden Traps</h3>
+                    <p>Deadly spikes lie off the safe path. Step on one, and you return to the dungeon entrance to try again.</p>
+                </article>
+
+                <article class="homepage-feature">
+                    <div class="homepage-feature-icon" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" width="48" height="48">
+                            <path d="M32 8 L36 18 L48 14 L42 26 L54 36 L40 36 L32 50 L24 36 L10 36 L22 26 L16 14 L28 18 Z" fill="#7a3c74" opacity="0.5"/>
+                            <ellipse cx="32" cy="30" rx="12" ry="14" fill="#2a4668"/>
+                            <path d="M22 22 Q32 6 42 22" stroke="#d94b63" stroke-width="2" fill="none"/>
+                            <circle cx="22" cy="22" r="2.2" fill="#d94b63"/>
+                            <circle cx="42" cy="22" r="2.2" fill="#d94b63"/>
+                            <circle cx="27" cy="30" r="2" fill="#ff6a82"/>
+                            <circle cx="37" cy="30" r="2" fill="#ff6a82"/>
+                            <path d="M26 40 Q32 44 38 40" stroke="#d94b63" stroke-width="1.6" fill="none"/>
+                        </svg>
+                    </div>
+                    <h3>Moving Guardians</h3>
+                    <p>Silent treasure guardians patrol set routes on Levels II and III. Predict their path, or be caught and reset.</p>
+                </article>
+
+                <article class="homepage-feature">
+                    <div class="homepage-feature-icon" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" width="48" height="48">
+                            <rect x="8" y="44" width="10" height="12" fill="#5dd3ff"/>
+                            <rect x="22" y="30" width="10" height="26" fill="#5dd3ff" opacity="0.85"/>
+                            <rect x="36" y="16" width="10" height="40" fill="#ffc857" opacity="0.9"/>
+                            <rect x="50" y="4"  width="10" height="52" fill="#ffc857"/>
+                            <rect x="6"  y="58" width="54" height="3" fill="#1e324e"/>
+                            <path d="M6 58 L60 58" stroke="#3a5d86" stroke-width="0.8"/>
+                        </svg>
+                    </div>
+                    <h3>Increasing Difficulty</h3>
+                    <p>Grow from a 15×15 beginner catacomb with 2 traps, to a 21×21 ancient vault with 6 traps and two moving guardians.</p>
+                </article>
+
+                <article class="homepage-feature">
+                    <div class="homepage-feature-icon" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" width="48" height="48">
+                            <rect x="6" y="6" width="52" height="52" rx="4" fill="none" stroke="#3a5d86" stroke-width="1.5"/>
+                            <path d="M6 22 L58 22 M22 6 L22 58" stroke="#3a5d86" stroke-width="1.2"/>
+                            <circle cx="14" cy="14" r="2.6" fill="#5dd3ff"/>
+                            <circle cx="42" cy="14" r="2.6" fill="#ffc857"/>
+                            <circle cx="14" cy="40" r="2.6" fill="#d94b63"/>
+                            <path d="M32 40 L40 40 L40 48 L48 48 L48 52 L32 52 Z" fill="#8de4ff" opacity="0.8"/>
+                        </svg>
+                    </div>
+                    <h3>Strategic Movement</h3>
+                    <p>Every move counts. Minimize your step count, race the timer, and master each labyrinth for the best completion time.</p>
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             TUTORIAL / HOW TO PLAY
+        ====================================== -->
+
+        <section class="homepage-tutorial" id="homepage-tutorial">
+
+            <div class="homepage-section-head">
+                <p class="homepage-section-eyebrow">◆ SURVIVAL GUIDE ◆</p>
+                <h2>How to Conquer the Dungeon</h2>
+                <p class="homepage-section-sub">
+                    Five simple rules. One chance. Learn them well.
+                </p>
+            </div>
+
+            <div class="homepage-tutorial-steps">
+
+                <div class="homepage-step">
+                    <div class="homepage-step-num">01</div>
+                    <div class="homepage-step-icon" aria-hidden="true">
+                        <div class="key-row">
+                            <span class="kb-key">W</span>
+                        </div>
+                        <div class="key-row">
+                            <span class="kb-key">A</span>
+                            <span class="kb-key">S</span>
+                            <span class="kb-key">D</span>
+                        </div>
+                        <div class="key-row key-alt">
+                            <span class="kb-arrow">↑ ← ↓ →</span>
+                        </div>
+                    </div>
+                    <h3>Master the Controls</h3>
+                    <p>
+                        Move with <strong>WASD</strong> or the <strong>Arrow Keys</strong>.
+                        Use <strong>Esc</strong> to pause, <strong>R</strong> to restart,
+                        and <strong>L</strong> to open Level Select.
+                    </p>
+                </div>
+
+                <div class="homepage-step">
+                    <div class="homepage-step-num">02</div>
+                    <div class="homepage-step-icon" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" width="52" height="52">
+                            <circle cx="22" cy="32" r="10" fill="none" stroke="#ffc857" stroke-width="3.5"/>
+                            <circle cx="22" cy="32" r="2.8" fill="#0a1425"/>
+                            <rect x="30" y="29" width="28" height="6" fill="#ffc857"/>
+                            <rect x="46" y="35" width="4" height="7" fill="#ffc857"/>
+                            <rect x="52" y="35" width="4" height="10" fill="#ffc857"/>
+                        </svg>
+                    </div>
+                    <h3>Find the Golden Key</h3>
+                    <p>
+                        Deep inside the maze waits an ancient key. Without it, the treasure door will never open — and you'll need to go back.
+                    </p>
+                </div>
+
+                <div class="homepage-step">
+                    <div class="homepage-step-num">03</div>
+                    <div class="homepage-step-icon" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" width="52" height="52">
+                            <rect x="16" y="10" width="32" height="48" fill="#3a5d86" stroke="#1e324e" stroke-width="2"/>
+                            <rect x="20" y="14" width="24" height="40" fill="#1e324e"/>
+                            <rect x="32" y="14" width="1.5" height="40" fill="#0d1a2e"/>
+                            <circle cx="40" cy="34" r="2.5" fill="#ffc857"/>
+                            <path d="M16 10 L48 10" stroke="#ff6a82" stroke-width="1.8" opacity="0.85"/>
+                            <path d="M20 14 Q32 8 44 14" stroke="#ff6a82" stroke-width="1.2" opacity="0.6" fill="none"/>
+                        </svg>
+                    </div>
+                    <h3>Pass Through the Locked Door</h3>
+                    <p>
+                        The sealed door blocks the direct path. Once you carry the key, it swings aside — and the treasure finally lies within reach.
+                    </p>
+                </div>
+
+                <div class="homepage-step">
+                    <div class="homepage-step-num">04</div>
+                    <div class="homepage-step-icon hp-step-danger" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" width="52" height="52">
+                            <rect x="6" y="44" width="52" height="7" fill="#2a4668"/>
+                            <polygon points="12,44 18,22 24,44" fill="#d94b63"/>
+                            <polygon points="22,44 28,18 34,44" fill="#ff6a82"/>
+                            <polygon points="32,44 38,14 44,44" fill="#d94b63"/>
+                            <polygon points="42,44 48,24 54,44" fill="#ff6a82"/>
+                            <path d="M28 20 Q50 10 58 32" stroke="#7a3c74" stroke-width="2" fill="none" stroke-dasharray="4 3" opacity="0.7"/>
+                            <ellipse cx="56" cy="36" rx="6" ry="9" fill="#2a4668" stroke="#d94b63" stroke-width="1.5"/>
+                            <circle cx="53" cy="34" r="1.4" fill="#ff6a82"/>
+                            <circle cx="59" cy="34" r="1.4" fill="#ff6a82"/>
+                        </svg>
+                    </div>
+                    <h3>Avoid Traps &amp; Guardians</h3>
+                    <p>
+                        Hidden spike fields reset your run. Patrolling guardians catch you on sight. Study their routes and time every crossing.
+                    </p>
+                </div>
+
+                <div class="homepage-step">
+                    <div class="homepage-step-num hp-step-gold-num">05</div>
+                    <div class="homepage-step-icon hp-step-gold" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" width="52" height="52">
+                            <rect x="10" y="28" width="44" height="26" rx="2" fill="#c89636" stroke="#8a6420" stroke-width="2"/>
+                            <rect x="10" y="22" width="44" height="12" rx="2" fill="#ffc857" stroke="#8a6420" stroke-width="2"/>
+                            <rect x="28" y="26" width="8" height="10" fill="#0d1a2e"/>
+                            <circle cx="32" cy="30" r="1.5" fill="#ffc857"/>
+                            <path d="M14 50 L14 28 M22 50 L22 28 M30 50 L30 36 M42 50 L42 28 M50 50 L50 28" stroke="#8a6420" stroke-width="0.8" opacity="0.6"/>
+                            <circle cx="32" cy="12" r="6" fill="#5dd3ff" opacity="0.2"/>
+                            <circle cx="32" cy="12" r="3.5" fill="#5dd3ff" opacity="0.45"/>
+                        </svg>
+                    </div>
+                    <h3>Reach the Treasure</h3>
+                    <p>
+                        The glowing chest waits in the deepest chamber. Touch it to seal your victory — then descend into the next, darker trial.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             GAMEPLAY PREVIEW
+        ====================================== -->
+
+        <section class="homepage-preview" id="homepage-preview">
+
+            <div class="homepage-preview-inner">
+
+                <div class="homepage-preview-copy">
+                    <p class="homepage-section-eyebrow">◆ WITNESS THE LABYRINTH ◆</p>
+                    <h2>See the Dungeon in Motion</h2>
+                    <p>
+                        Styled like the actual game board you'll explore below,
+                        this preview hints at what waits: stone walls, flickering
+                        torches, and the quiet tension of every unturned corner.
+                        Step inside and begin your own run.
+                    </p>
+                    <button class="hp-cta-gold hp-preview-enter" data-action="enter-dungeon" aria-label="Enter the dungeon and begin playing from the preview section">
+                        Enter the Dungeon
+                    </button>
+                </div>
+
+                <div class="homepage-preview-board" role="img" aria-label="An illustrative preview of the dungeon grid showing walls, floor, the player, a key, a locked door, a trap, the treasure, and a patrolling guardian">
+
+                    <div class="hp-board-frame" aria-hidden="true">
+                        <div class="hp-board-glow"></div>
+                        <div class="hp-board-grid">
+                            <!-- 7x7 tiles injected as classes for styling -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             FOOTER
+        ====================================== -->
+
+        <footer class="homepage-footer">
+
+            <div class="homepage-footer-inner">
+
+                <div class="homepage-footer-brand">
+                    <span class="homepage-footer-logo" aria-hidden="true"></span>
+                    <div>
+                        <p class="homepage-footer-wordmark">DUNGEON SOLVER</p>
+                        <p class="homepage-footer-tagline">Every step is a choice. Every dungeon hides a secret.</p>
+                    </div>
+                </div>
+
+                <div class="homepage-footer-cols">
+
+                    <div class="homepage-footer-col">
+                        <h4>Explore</h4>
+                        <ul>
+                            <li><a href="#homepage-hero" data-nav="home">Home</a></li>
+                            <li><a href="#homepage-levels" data-nav="levels">Levels</a></li>
+                            <li><a href="#homepage-tutorial" data-nav="how">How to Play</a></li>
+                            <li><a href="#homepage-features" data-nav="about">About the Game</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="homepage-footer-col">
+                        <h4>Controls</h4>
+                        <ul class="homepage-footer-controls">
+                            <li><span class="kb-key kb-key-sm">W A S D</span><span>&nbsp;/ Arrows — Move</span></li>
+                            <li><span class="kb-key kb-key-sm">Esc</span><span>&nbsp;— Pause</span></li>
+                            <li><span class="kb-key kb-key-sm">R</span><span>&nbsp;— Restart Level</span></li>
+                            <li><span class="kb-key kb-key-sm">L</span><span>&nbsp;— Level Select</span></li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="homepage-footer-bottom">
+                <p>© Dungeon Solver — A handcrafted puzzle adventure built with HTML, CSS, and vanilla JavaScript.</p>
+            </div>
+
+        </footer>
+
+    </div>
+
 
     <!-- =========================================
          MAIN GAME
@@ -154,6 +629,15 @@
             </button>
 
 
+            <button id="homeButton" aria-label="Return to homepage">
+
+                <span>
+                    HOME
+                </span>
+
+            </button>
+
+
             <button id="levelSelectButton">
 
                 <span>
@@ -190,6 +674,8 @@
         </div>
 
     </div>
+
+    </div><!-- /#app -->
 
 
     <!-- =========================================
@@ -367,10 +853,11 @@
     ========================================== -->
 
     <script src="js/dungeon.js"></script>
-<script src="js/player.js"></script>
-<script src="js/enemy.js"></script>
-<script src="js/ui.js"></script>
-<script src="script.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/enemy.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="script.js"></script>
+    <script src="js/homepage.js"></script>
 </body>
 
 </html>

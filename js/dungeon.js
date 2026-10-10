@@ -1,17 +1,9 @@
-
-
-
-
-
 const MAZE_DIRECTIONS = [
     { row: -1, col: 0 },
     { row: 1, col: 0 },
     { row: 0, col: -1 },
     { row: 0, col: 1 }
 ];
-
-
-
 
 function shuffle(array) {
 
@@ -28,9 +20,6 @@ function shuffle(array) {
 
     return result;
 }
-
-
-
 
 function findPath(dungeon, start, target) {
 
@@ -156,9 +145,6 @@ function findPath(dungeon, start, target) {
     return null;
 }
 
-
-
-
 function generateMaze(level = 0) {
 
     let rows;
@@ -184,9 +170,6 @@ function generateMaze(level = 0) {
         rows = 21;
         cols = 21;
     }
-
-
-    
 
     const dungeon =
         Array.from(
@@ -292,12 +275,7 @@ function generateMaze(level = 0) {
     }
 
 
-    
-
-    carve(1, 1);
-
-
-    
+    carve(1, 1);    
 
     const loopChance =
         level === 0
@@ -308,9 +286,6 @@ function generateMaze(level = 0) {
 
 
     const possibleOpenings = [];
-
-
-    
 
     for (
         let row = 1;
@@ -339,8 +314,6 @@ function generateMaze(level = 0) {
     }
 
 
-    
-
     for (
         let row = 2;
         row < rows - 1;
@@ -366,9 +339,6 @@ function generateMaze(level = 0) {
             }
         }
     }
-
-
-    
 
     const shuffledOpenings =
         shuffle(possibleOpenings);
@@ -499,9 +469,6 @@ function getReachableCells(
     return cells;
 }
 
-
-
-
 function isDungeonSolvable(dungeon) {
 
     const queue = [
@@ -560,10 +527,7 @@ function isDungeonSolvable(dungeon) {
         ) {
 
             hasKey = true;
-        }
-
-
-        
+        }  
 
         if (
             currentCell === "D"
@@ -576,9 +540,6 @@ function isDungeonSolvable(dungeon) {
 
             passedDoor = true;
         }
-
-
-        
 
         if (
             currentCell === "T" &&

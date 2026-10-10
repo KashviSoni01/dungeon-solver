@@ -1,5 +1,3 @@
-
-
 let player = {
     row: 1,
     col: 1,
@@ -13,8 +11,6 @@ let trapTriggered = false;
 let isPlayerMoving = false;
 let movementAnimationTimer = null;
 let trapResetTimer = null;
-
-
 
 
 function movePlayer(
@@ -47,7 +43,6 @@ function movePlayer(
         player.col + colChange;
 
 
-    
 
     if (
         newRow < 0 ||
@@ -71,9 +66,7 @@ function movePlayer(
 
         return;
     }
-
-
-    
+ 
 
     if (
         nextCell === "D" &&
@@ -91,22 +84,14 @@ function movePlayer(
     }
 
 
-    
-
     player.row = newRow;
     player.col = newCol;
 
 
-    
-
     player.direction =
         direction;
-
-
     moves++;
-
-
-    
+    gameStarted = true;
 
     isPlayerMoving = true;
 
@@ -128,9 +113,6 @@ function movePlayer(
             180
         );
 
-
-    
-
     if (
         nextCell === "K"
     ) {
@@ -143,9 +125,6 @@ function movePlayer(
             newCol
         ] = ".";
     }
-
-
-    
 
     if (
         nextCell === "D" &&
@@ -160,9 +139,6 @@ function movePlayer(
             newCol
         ] = ".";
     }
-
-
-    
 
     if (
         nextCell === "X"
@@ -206,9 +182,6 @@ function movePlayer(
 
     checkWin();
 }
-
-
-
 
 function resetPlayer() {
 

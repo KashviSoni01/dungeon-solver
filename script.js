@@ -1,6 +1,206 @@
-/* =========================================================
-   GAME STATE
-========================================================= */
+const ScreenManager = (() => {
+
+    const storageKey = "ds_progress_v1";
+    let active = "homepage";
+
+
+    function getHomeEl() {
+        return document.querySelector(".homepage");
+    }
+
+    function getGameEl() {
+        return document.querySelector(".game");
+    }
+
+    function loadProgress() {
+        try {
+            const raw =
+                typeof localStorage !== "undefined"
+                    ? localStorage.getItem(storageKey)
+                    : null;
+
+            if (!raw) return fallbackProgress();
+
+            const parsed = JSON.parse(raw);
+
+            const highest =
+                Number.isInteger(parsed.highestUnlockedLevel)
+                && parsed.highestUnlockedLevel >= 0
+                && parsed.highestUnlockedLevel <= 2
+                    ? parsed.highestUnlockedLevel
+                    : 0;
+
+            const completed =
+                Array.isArray(parsed.completedLevels)
+                    ? parsed.completedLevels
+                        .filter(n => Number.isInteger(n) && n >= 0 && n <= 2)
+                    : [];
+
+            const bestTimes =
+                parsed.bestTimes && typeof parsed.bestTimes === "object"
+                    ? parsed.bestTimes
+                    : {};
+
+            for (const k of Object.keys(bestTimes)) {
+                const idx = parseInt(k, 10);
+                if (
+                    !(idx >= 0 && idx <= 2) ||
+                    !Number.isInteger(bestTimes[k]) ||
+                    bestTimes[k] < 0
+                ) {
+                    delete bestTimes[k];
+                }
+            }
+
+            return {
+                highestUnlockedLevel: highest,
+                completedLevels: completed,
+                bestTimes
+            };
+
+        } catch (err) {
+            return fallbackProgress();
+        }
+    }
+
+    function fallbackProgress() {
+        return {
+            highestUnlockedLevel: 0,
+            completedLevels: [],
+            bestTimes: {}
+        };
+    }
+
+    function saveProgress(data) {
+        try {
+            if (typeof localStorage !== "undefined") {
+                localStorage.setItem(storageKey, JSON.stringify(data));
+            }
+        } catch (err) {
+        }
+    }
+
+    const progress = loadProgress();
+
+    function applyVisibility(homeDisplay, gameDisplay, classesToAdd, classesToRemove) {
+        const home = getHomeEl();
+        const game = getGameEl();
+        if (home) {
+            home.style.display = homeDisplay;
+            classesToAdd.forEach(c => home.classList.add(c));
+            classesToRemove.forEach(c => home.classList.remove(c));
+        }
+        if (game) {
+            game.style.display = gameDisplay;
+        }
+    }
+
+    function showHome() {
+        active = "homepage";
+
+        if (typeof stopEnemy === "function") {
+            stopEnemy();
+        }
+
+        if (typeof gamePaused !== "undefined") {
+            gamePaused = true;
+        }
+
+        applyVisibility("block", "none", ["screen-enter"], ["screen-leave"]);
+
+        setTimeout(() => {
+            const home = getHomeEl();
+            if (home) home.classList.remove("screen-enter");
+        }, 420);
+    }
+
+    function showGame(levelIndex, opts) {
+        const options = opts || {};
+        const forceReset = options.reset === true;
+
+        const target =
+            Number.isInteger(levelIndex) &&
+            levelIndex >= 0 &&
+            levelIndex <= progress.highestUnlockedLevel
+                ? levelIndex
+                : progress.highestUnlockedLevel;
+
+        active = "game";
+
+        applyVisibility("none", "flex", [], []);
+
+        const shouldReset =
+            forceReset ||
+            (typeof currentLevel !== "undefined" && currentLevel !== target);
+
+        if (shouldReset) {
+            if (typeof selectLevel === "function") {
+                selectLevel(target);
+            }
+        } else {
+            if (typeof gamePaused !== "undefined") {
+                gamePaused = false;
+            }
+            if (typeof renderDungeon === "function") {
+                renderDungeon();
+            }
+            if (typeof initializeEnemy === "function" &&
+                typeof dungeons !== "undefined" &&
+                dungeons[target] &&
+                ((typeof enemy === "undefined" || enemy === null) &&
+                 (typeof keyEnemy === "undefined" || keyEnemy === null))) {
+                initializeEnemy(target);
+            }
+            if (typeof startEnemyPatrol === "function") {
+                startEnemyPatrol();
+            }
+            if (typeof startKeyEnemyPatrol === "function") {
+                startKeyEnemyPatrol();
+            }
+        }
+    }
+
+    /* ---------- Progress mutation helpers called by game flow ---------- */
+
+    function markLevelCompleted(levelIdx, timeSec) {
+        if (!(levelIdx >= 0 && levelIdx <= 2)) return;
+
+        if (progress.completedLevels.indexOf(levelIdx) === -1) {
+            progress.completedLevels.push(levelIdx);
+        }
+
+        if (
+            Number.isInteger(timeSec) && timeSec >= 0 &&
+            (!progress.bestTimes[levelIdx] || timeSec < progress.bestTimes[levelIdx])
+        ) {
+            progress.bestTimes[levelIdx] = timeSec;
+        }
+
+        saveProgress(progress);
+    }
+
+    function unlockLevel(levelIdx) {
+        if (!(levelIdx >= 0 && levelIdx <= 2)) return;
+        if (levelIdx > progress.highestUnlockedLevel) {
+            progress.highestUnlockedLevel = levelIdx;
+            saveProgress(progress);
+        }
+    }
+
+    return {
+        get active() { return active; },
+        set active(v) { if (v === "homepage" || v === "game") active = v; },
+        progress,
+        loadProgress,
+        saveProgress: () => saveProgress(progress),
+        markLevelCompleted,
+        unlockLevel,
+        showHome,
+        showGame
+    };
+
+})();
+
 
 let currentLevel = 0;
 
@@ -11,29 +211,28 @@ let gameStarted = false;
 let gameWon = false;
 let gamePaused = false;
 
-let highestUnlockedLevel = 0;
+let highestUnlockedLevel =
+    (ScreenManager.progress && Number.isInteger(ScreenManager.progress.highestUnlockedLevel))
+        ? ScreenManager.progress.highestUnlockedLevel
+        : 0;
 
-
-/* =========================================================
-   LEVELS
-========================================================= */
 
 const levels = [
 
     {
-        name: "The Forgotten Cell",
+        name: "The Forgotten Catacombs",
         difficulty: "EASY",
         trapCount: 2
     },
 
     {
-        name: "The Lost Crypt",
+        name: "The Guardian's Domain",
         difficulty: "MEDIUM",
         trapCount: 4
     },
 
     {
-        name: "The Ancient Vault",
+        name: "The Twin Guardians",
         difficulty: "HARD",
         trapCount: 6
     }
@@ -41,9 +240,6 @@ const levels = [
 ];
 
 
-/* =========================================================
-   DOM ELEMENTS
-========================================================= */
 
 const dungeonElement =
     document.getElementById("dungeon");
@@ -69,6 +265,9 @@ const restartButton =
 
 const pauseButton =
     document.getElementById("pause");
+
+const homeButton =
+    document.getElementById("homeButton");
 
 const levelsButton =
     document.getElementById("levelSelectButton");
@@ -118,21 +317,11 @@ const closeLevelSelectBtn =
         "closeLevelSelect"
     );
 
-
-/* =========================================================
-   CREATE DUNGEONS
-========================================================= */
-
 const dungeons =
     levels.map(
         (_, index) =>
             generateDungeon(index)
     );
-
-
-/* =========================================================
-   CHECK WIN
-========================================================= */
 
 function checkWin() {
 
@@ -162,6 +351,9 @@ function checkWin() {
             moves;
 
 
+        ScreenManager.markLevelCompleted(currentLevel, timer);
+
+
         winScreen.style.display =
             "flex";
 
@@ -183,24 +375,26 @@ function checkWin() {
     }
 }
 
-
-/* =========================================================
-   KEYBOARD CONTROLS
-========================================================= */
-
 document.addEventListener(
     "keydown",
     event => {
+        if (ScreenManager.active !== "game") {
+            return;
+        }
 
-        /* =====================================
-           ARROW KEYS / WASD
-        ===================================== */
+        const overlayShown =
+            (pauseScreen && pauseScreen.style.display === "flex") ||
+            (levelSelectScreen && levelSelectScreen.style.display === "flex") ||
+            (winScreen && winScreen.style.display === "flex");
+
 
         switch (event.key) {
 
             case "ArrowUp":
             case "w":
             case "W":
+
+                if (overlayShown) return;
 
                 event.preventDefault();
 
@@ -217,6 +411,8 @@ document.addEventListener(
             case "s":
             case "S":
 
+                if (overlayShown) return;
+
                 event.preventDefault();
 
                 movePlayer(
@@ -231,6 +427,8 @@ document.addEventListener(
             case "ArrowLeft":
             case "a":
             case "A":
+
+                if (overlayShown) return;
 
                 event.preventDefault();
 
@@ -247,6 +445,8 @@ document.addEventListener(
             case "d":
             case "D":
 
+                if (overlayShown) return;
+
                 event.preventDefault();
 
                 movePlayer(
@@ -258,24 +458,22 @@ document.addEventListener(
                 return;
         }
 
-
-        /* =====================================
-           ESC = PAUSE
-        ===================================== */
-
         if (
             event.key === "Escape"
         ) {
 
-            togglePause();
+            if (overlayShown) {
+                if (levelSelectScreen && levelSelectScreen.style.display === "flex") {
+                    closeLevelSelect();
+                } else if (pauseScreen && pauseScreen.style.display === "flex") {
+                    togglePause();
+                }
+            } else {
+                togglePause();
+            }
 
             return;
         }
-
-
-        /* =====================================
-           R = RESET
-        ===================================== */
 
         if (
             event.key === "r" ||
@@ -286,11 +484,6 @@ document.addEventListener(
 
             return;
         }
-
-
-        /* =====================================
-           L = LEVEL SELECT
-        ===================================== */
 
         if (
             event.key === "l" ||
@@ -304,16 +497,12 @@ document.addEventListener(
     }
 );
 
-
-/* =========================================================
-   TIMER
-========================================================= */
-
 let timerInterval =
     setInterval(
         () => {
 
             if (
+                ScreenManager.active === "game" &&
                 gameStarted &&
                 !gameWon &&
                 !gamePaused &&
@@ -328,11 +517,6 @@ let timerInterval =
         },
         1000
     );
-
-
-/* =========================================================
-   RESET LEVEL
-========================================================= */
 
 function resetLevel() {
 
@@ -390,6 +574,7 @@ renderDungeon();
             () => {
 
                 if (
+                    ScreenManager.active === "game" &&
                     gameStarted &&
                     !gameWon &&
                     !gamePaused &&
@@ -405,11 +590,6 @@ renderDungeon();
             1000
         );
 }
-
-
-/* =========================================================
-   PAUSE
-========================================================= */
 
 function togglePause() {
 
@@ -435,11 +615,6 @@ function togglePause() {
     }
 }
 
-
-/* =========================================================
-   OPEN LEVEL SELECT
-========================================================= */
-
 function openLevelSelect() {
 
     renderLevelSelect();
@@ -448,21 +623,11 @@ function openLevelSelect() {
         "flex";
 }
 
-
-/* =========================================================
-   CLOSE LEVEL SELECT
-========================================================= */
-
 function closeLevelSelect() {
 
     levelSelectScreen.style.display =
         "none";
 }
-
-
-/* =========================================================
-   SELECT LEVEL
-========================================================= */
 
 function selectLevel(index) {
 
@@ -480,11 +645,6 @@ function selectLevel(index) {
     resetLevel();
 }
 
-
-/* =========================================================
-   RESTART BUTTON
-========================================================= */
-
 if (restartButton) {
 
     restartButton.addEventListener(
@@ -496,11 +656,6 @@ if (restartButton) {
         }
     );
 }
-
-
-/* =========================================================
-   PAUSE BUTTON
-========================================================= */
 
 if (pauseButton) {
 
@@ -514,10 +669,17 @@ if (pauseButton) {
     );
 }
 
+if (homeButton) {
 
-/* =========================================================
-   RESUME BUTTON
-========================================================= */
+    homeButton.addEventListener(
+        "click",
+        () => {
+
+            ScreenManager.showHome();
+
+        }
+    );
+}
 
 if (resumeButton) {
 
@@ -535,10 +697,6 @@ if (resumeButton) {
 }
 
 
-/* =========================================================
-   LEVELS BUTTON (from main HUD)
-========================================================= */
-
 if (levelsButton) {
 
     levelsButton.addEventListener(
@@ -552,10 +710,6 @@ if (levelsButton) {
 }
 
 
-/* =========================================================
-   CLOSE LEVEL SELECT
-========================================================= */
-
 if (closeLevelSelectBtn) {
 
     closeLevelSelectBtn.addEventListener(
@@ -568,10 +722,6 @@ if (closeLevelSelectBtn) {
     );
 }
 
-
-/* =========================================================
-   PAUSE SCREEN -> LEVEL SELECT
-========================================================= */
 
 if (pauseLevelSelectButton) {
 
@@ -590,11 +740,6 @@ if (pauseLevelSelectButton) {
     );
 }
 
-
-/* =========================================================
-   WIN SCREEN -> LEVEL SELECT
-========================================================= */
-
 if (winLevelSelectButton) {
 
     winLevelSelectButton.addEventListener(
@@ -609,11 +754,6 @@ if (winLevelSelectButton) {
         }
     );
 }
-
-
-/* =========================================================
-   NEXT LEVEL
-========================================================= */
 
 if (nextLevelButton) {
 
@@ -632,6 +772,7 @@ if (nextLevelButton) {
                         currentLevel + 1
                     );
 
+                ScreenManager.unlockLevel(currentLevel + 1);
 
                 currentLevel++;
 
@@ -641,7 +782,7 @@ if (nextLevelButton) {
             else {
 
                 alert(
-                    "🎉 You completed all three levels!"
+                    "You completed all three levels!"
                 );
 
                 currentLevel = 0;
@@ -653,10 +794,6 @@ if (nextLevelButton) {
     );
 }
 
-
-/* =========================================================
-   PLAY AGAIN
-========================================================= */
 
 if (playAgainButton) {
 
@@ -672,10 +809,12 @@ if (playAgainButton) {
     );
 }
 
-
-/* =========================================================
-   INITIAL RENDER
-========================================================= */
-
 initializeEnemy(currentLevel);
 renderDungeon();
+
+(function applyInitialScreenVisibility() {
+    const home = document.querySelector(".homepage");
+    const game = document.querySelector(".game");
+    if (home) home.style.display = "block";
+    if (game) game.style.display = "none";
+})();
